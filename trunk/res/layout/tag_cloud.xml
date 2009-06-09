@@ -1,0 +1,5 @@
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_height="fill_parent" android:layout_width="fill_parent"
+	android:id="@+id/cloudText" android:padding="6dip"
+	android:gravity="center_vertical|center_horizontal" android:focusable="true"
+	android:clickable="true" android:linksClickable="true"/>
