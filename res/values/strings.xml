@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+	<string name="app_name">Beelicious</string>
+	<string name="title_label">Title</string>
+	<string name="url_label">URL</string>
+	<string name="comments_label">Comments</string>
+	<string name="tags_label">Tags</string>
+
+	<string name="tag_suggestions_label">Tag suggestions</string>
+	<string name="pref_account_title">Account settings</string>
+	<string name="pref_delicious_username">Username</string>
+	<string name="pref_delicious_password">Password</string>
+	<string name="pref_android_tag_name">Android tag name</string>
+	<string name="pref_android_tag_enable">Add Android tag</string>
+	<string name="pref_android_tag_enable_summary">Automatically add custom tag</string>
+	<string name="pref_android_tag_name_default">android:bookmarks</string>
+	<string name="pref_defaults_title">Defaults</string>
+	<string name="ok_button">OK</string>
+	<string name="cancel_button">Cancel</string>
+
+	<string name="menu_settings">Settings</string>
+	<string name="add_bookmark_title">Beelicious</string>
+	<string name="tab_popular">Popular</string>
+	<string name="tab_recent">Recent</string>
+	<string name="tab_tags">Tags</string>
+	<string name="menu_add">Add bookmark</string>
+	<string name="menu_search">Search tags</string>
+	<string name="login_title">Login</string>
+	<string name="login_message">Please enter your Del.icio.us username and
+		password</string>
+	<string name="validate_button">Validate</string>
+	<string name="msg_credentials_valid">Username and password are valid.</string>
+	<string name="msg_credentials_invalid">Oooops! Invalid username and password!
+	</string>
+	<string name="pref_delicious_login">Login credentials</string>
+	<string name="pref_delicious_login_summary">Set username and password</string>
+	<string name="login_validate_title">Validating</string>
+	<string name="login_validate_message">Validating username and password</string>
+	<string name="private_label">Keep private</string>
+	<string name="pref_delicious_private">Keep private</string>
+	<string name="pref_delicious_private_summary">New bookmarks are private by default</string>
+	<string name="tags_suggest_title">Tag suggestions</string>
+	<string name="tags_suggest_message">Retrieving tag suggestions</string>
+	<string name="adding_bookmark_message">Submitting bookmark to Del.icio.us
+	</string>
+	<string name="add_bookmark_failed_message">Failed to add bookmark to Del.icio.us
+	</string>
+	<string name="fetching_title_message">Retrieving...</string>
+	<string name="loading_message">Loading...</string>
+	<string name="load_failed">Failed to load data</string>
+	<string name="search_label">Search</string>
+	<string name="search_hint">Your del.icio.us tags</string>
+	<string name="pref_suggest_enable">Suggest tags</string>
+	<string name="pref_suggest_enable_summary">Provide autocomplete suggestions</string>
+	<string name="fetching_tags_message">Retrieving complete tag list. This may
+		take up to several minutes...</string>
+	<string name="fetch_tags_failed_message">Tag list retrieval failed</string>
+	<string name="recent_header_title">Your recent bookmarks</string>
+	<string name="search_header_title">Search results</string>
+	<string name="app_description">Share links on Del.icio.us</string>
+	<string name="disclaimer_message">Beelicious is distributed in the hope
+		that it will be useful, but WITHOUT ANY WARRANTY; without even the
+		implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+		PURPOSE. See the GNU General Public License for more
+		details.\n\nBeelicious is free software: you can
+		redistribute it and/or
+		modify it under the terms of the GNU General
+		Public License as
+		published by the Free Software Foundation, either
+		version 3 of the
+		License, or (at your option) any later version.\nIf you did not
+		receive a copy of the GNU General Public License along with
+		Beelicious, see http://www.gnu.org/licenses.</string>
+	<string name="loading_additional_message">Loading additional results...</string>
+	<string name="disclaimer_yahoo_message">This application is in no way affiliated with
+		or endorsed by either Yahoo! or Del.icio.us.</string>
+	<string name="pref_tags_title">Tags</string>
+	<string name="pref_suggest_sync">Sync tags</string>
+	<string name="pref_suggest_sync_summary">Sync tag list with Del.icio.us</string>
+	<string name="pref_suggest_sync_last">Last sync</string>
+	<string name="menu_tagcloud">Tag cloud</string>
+	<string name="cloud_title">Tag cloud</string>
+	<string name="pref_cloud_logarithmic">Logarithmic cloud</string>
+	<string name="pref_cloud_logarithmic_summary_enabled">Tag cloud with logarithmic font scaling</string>
+	<string name="pref_cloud_logarithmic_summary_disabled">Tag cloud with linear font scaling</string>
+	<string name="tags_sync_confirm_title">Sync tags</string>
+	<string name="tags_sync_confirm_message">The entire list of tags has to be fetched. This
+		may take up to several minutes. Proceed?</string>
+<string name="tags_suggest_empty">No tag suggestions.</string>
+<string name="tag_suggest_available">tag suggestions available.</string>
+</resources>

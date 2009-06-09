@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+	<PreferenceCategory android:title="@string/pref_account_title">
+		<Preference android:key="delicious_login" android:title="@string/pref_delicious_login"
+			android:summary="@string/pref_delicious_login_summary" />
+	</PreferenceCategory>
+	<PreferenceCategory android:title="@string/pref_tags_title">
+		<CheckBoxPreference android:title="@string/pref_suggest_enable"
+			android:summary="@string/pref_suggest_enable_summary" android:key="suggest_enable"
+			android:disableDependentsState="false"/>
+		<Preference android:title="@string/pref_suggest_sync"
+			android:key="suggest_sync" android:summary="@string/pref_suggest_sync_summary"
+			android:dependency="suggest_enable"/>
+	<CheckBoxPreference android:summaryOn="@string/pref_cloud_logarithmic_summary_enabled" android:summaryOff="@string/pref_cloud_logarithmic_summary_disabled" android:dependency="suggest_enable" android:defaultValue="true" android:key="cloud_logarithmic" android:title="@string/pref_cloud_logarithmic" android:summary="@string/pref_cloud_logarithmic_summary_enabled"></CheckBoxPreference>
+</PreferenceCategory>
+	<PreferenceCategory android:title="@string/pref_defaults_title">
+		<CheckBoxPreference android:key="android_tag_enable"
+			android:summary="@string/pref_android_tag_enable_summary"
+			android:title="@string/pref_android_tag_enable"
+			android:disableDependentsState="false" android:defaultValue="true"/>
+		<EditTextPreference android:title="@string/pref_android_tag_name"
+			android:defaultValue="@string/pref_android_tag_name_default"
+			android:key="android_tag_name" android:dependency="android_tag_enable" />
+		<CheckBoxPreference android:key="delicious_private"
+			android:summary="@string/pref_delicious_private_summary"
+			android:title="@string/pref_delicious_private" />
+	</PreferenceCategory>
+</PreferenceScreen>

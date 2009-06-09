@@ -1,0 +1,19 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="vertical" android:layout_width="fill_parent"
+	android:layout_height="fill_parent">
+	<ListView android:id="@android:id/list" android:layout_width="fill_parent"
+		android:layout_height="fill_parent" android:scrollbarStyle="outsideInset"></ListView>
+
+	<RelativeLayout android:id="@android:id/empty"
+		android:layout_height="fill_parent" android:layout_width="fill_parent">
+		<TextView android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:layout_gravity="center"
+			android:layout_centerVertical="true" android:layout_centerHorizontal="true"
+			android:id="@+id/loadingText" android:text="@string/loading_message"></TextView>
+		<ProgressBar android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:indeterminate="true"
+			android:id="@+id/progressBar" android:layout_centerVertical="true"
+			style="?android:attr/progressBarStyleSmall"
+			android:layout_toLeftOf="@id/loadingText" android:layout_marginRight="4dip"></ProgressBar>
+	</RelativeLayout>
+</LinearLayout>

@@ -1,0 +1,41 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="vertical" android:layout_width="fill_parent"
+	android:layout_height="fill_parent">
+	
+	<TextView android:layout_height="wrap_content" android:drawableLeft="@drawable/icon" android:layout_width="fill_parent" android:background="@android:color/background_light" android:text="@string/login_message" android:gravity="center_vertical" android:textAppearance="@android:style/TextAppearance.Inverse" android:drawablePadding="16dip" android:paddingLeft="6dip" android:paddingRight="4dip" android:paddingBottom="10dip" android:paddingTop="8dip"></TextView><ScrollView android:layout_height="fill_parent" android:layout_weight="1" android:layout_width="fill_parent">
+		<LinearLayout android:layout_weight="1"
+			android:layout_width="fill_parent" android:orientation="vertical"
+			android:layout_height="fill_parent" android:paddingTop="12dip"
+			android:paddingBottom="12dip" android:paddingLeft="4dip"
+			android:paddingRight="4dip" android:scrollbars="vertical" android:scrollbarStyle="insideInset">
+			<TextView android:layout_width="wrap_content"
+				android:layout_height="wrap_content" android:text="@string/pref_delicious_username"></TextView>
+			<EditText android:layout_height="wrap_content" android:id="@+id/usernameEdit"
+				android:layout_width="fill_parent"></EditText>
+			<TextView android:layout_width="wrap_content"
+				android:layout_height="wrap_content" android:text="@string/pref_delicious_password"></TextView>
+			<EditText android:layout_height="wrap_content"
+				android:layout_width="fill_parent" android:id="@+id/passwordEdit"
+				android:password="true"></EditText>
+			<TextView android:layout_height="wrap_content" android:text="@string/disclaimer_yahoo_message"
+				android:layout_width="fill_parent"
+				android:paddingTop="6dip"
+				android:paddingLeft="3dip" android:textSize="13dip" android:textStyle="bold" android:textColor="#BB3333"></TextView>
+			<TextView android:layout_height="wrap_content" android:text="@string/disclaimer_message"
+				android:paddingBottom="4dip" android:layout_width="fill_parent"
+				android:textSize="12dip" android:paddingTop="6dip"
+				android:paddingLeft="3dip" android:textColor="@android:color/darker_gray" android:autoLink="web" android:linksClickable="true"></TextView>
+		</LinearLayout>
+	</ScrollView>
+	<LinearLayout android:layout_height="wrap_content"
+		android:layout_width="fill_parent" android:orientation="horizontal"
+		android:background="@android:drawable/bottom_bar" android:paddingTop="4dip">
+		<Button android:layout_height="wrap_content"
+			android:layout_width="fill_parent" android:layout_weight="1"
+			android:id="@+id/okButton" android:text="@string/ok_button"
+			android:layout_marginRight="20dip"></Button>
+		<Button android:layout_height="wrap_content" android:id="@+id/cancelButton"
+			android:layout_weight="1" android:layout_width="fill_parent"
+			android:text="@string/cancel_button" android:layout_marginLeft="20dip"></Button>
+	</LinearLayout>
+</LinearLayout>

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="vertical" android:layout_width="fill_parent"
+	android:layout_height="fill_parent">
+	<ScrollView android:layout_height="fill_parent" android:layout_weight="1" android:layout_width="fill_parent" android:fillViewport="true">
+	<LinearLayout android:orientation="vertical"
+		android:layout_width="fill_parent" android:layout_height="fill_parent"
+		android:layout_weight="1" android:paddingLeft="2px"
+		android:paddingRight="2px" android:paddingTop="4px" android:scrollbarStyle="outsideInset" android:scrollbars="vertical">
+		<TextView android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:text="@string/url_label"></TextView>
+		<EditText android:layout_height="wrap_content"
+			android:layout_width="fill_parent" android:id="@+id/urlEdit"></EditText>
+		<TextView android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:text="@string/title_label"></TextView>
+		<EditText android:layout_height="wrap_content"
+			android:layout_width="fill_parent" android:id="@+id/titleEdit"></EditText>
+		<TextView android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:text="@string/comments_label"></TextView>
+		<EditText android:layout_width="fill_parent"
+			android:layout_height="fill_parent" android:layout_weight="20"
+			android:id="@+id/commentsEdit" android:gravity="top" android:minLines="1"></EditText>
+		<TextView android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:text="@string/tags_label"></TextView>
+		<LinearLayout android:id="@+id/TagsLayout"
+			android:layout_width="fill_parent" android:layout_weight="20"
+			android:layout_height="fill_parent" android:orientation="horizontal">
+			<MultiAutoCompleteTextView android:layout_width="fill_parent"
+				android:layout_height="fill_parent" android:layout_weight="20"
+				android:id="@+id/tagsEdit" android:gravity="top" android:minLines="2"></MultiAutoCompleteTextView>>
+			<Button android:layout_width="wrap_content"
+				android:layout_height="fill_parent" android:id="@+id/tagsButton" android:drawableLeft="@drawable/ic_tag_suggest"></Button>
+		</LinearLayout>
+		<CheckBox android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:text="@string/private_label"
+			android:id="@+id/privateCheck"></CheckBox>
+	</LinearLayout>
+	</ScrollView>
+	<LinearLayout android:layout_height="wrap_content"
+		android:orientation="horizontal" android:layout_width="fill_parent"
+		android:paddingTop="4px" android:paddingLeft="1px"
+		android:paddingRight="1px" android:background="@android:drawable/bottom_bar">
+		<Button android:layout_height="wrap_content" android:text="@string/ok_button"
+			android:layout_width="wrap_content" android:layout_weight="1"
+			android:layout_gravity="fill_horizontal" android:layout_marginRight="20px"
+			android:id="@+id/okButton"></Button>
+		<Button android:layout_height="wrap_content" android:text="@string/cancel_button"
+			android:layout_width="wrap_content" android:layout_gravity="fill_horizontal"
+			android:layout_weight="1" android:layout_marginLeft="20px"
+			android:id="@+id/cancelButton"></Button>
+	</LinearLayout>
+
+
+
+</LinearLayout>
