@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2009 Netdragon Websoft Inc (http://ir.netdragon.us/) 
+                    <whynonnazheng@gmail.com>
+ 
+     This file is part of Bitlicious.
+ 
+     Bitlicious is free software: you can redistribute it and/or modify
+     it under the terms of the GNU General Public License as published by
+     the Free Software Foundation, either version 3 of the License, or
+     (at your option) any later version.
+  
+     Bitlicious is distributed in the hope that it will be useful,
+     but WITHOUT ANY WARRANTY; without even the implied warranty of
+     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+     GNU General Public License for more details.
+
+     You should have received a copy of the GNU General Public License
+     along with Bitlicious.  If not, see <http://www.gnu.org/licenses/>.
+ -->
+<resources>
+
+	<string name="app_name">Beelicious</string>
+	<string name="title_label">標題</string>
+	<string name="url_label">URL</string>
+	<string name="comments_label">注釋</string>
+	<string name="tags_label">選項卡</string>
+
+	<string name="tag_suggestions_label">選項卡建議</string>
+	<string name="pref_account_title">賬戶設定</string>
+	<string name="pref_delicious_username">使用者名</string>
+	<string name="pref_delicious_password">密碼</string>
+	<string name="pref_android_tag_name">Android標記名稱</string>
+	<string name="pref_android_tag_enable">新增Android選項卡</string>
+	<string name="pref_android_tag_enable_summary">自動新增自訂選項卡</string>
+	<string name="pref_android_tag_name_default">android:bookmarks</string>
+	<string name="pref_defaults_title">預設</string>
+	<string name="ok_button">確認</string>
+	<string name="cancel_button">取消</string>
+
+	<string name="menu_settings">設定</string>
+	<string name="add_bookmark_title">Beelicious</string>
+	<string name="tab_popular">受歡迎的</string>
+	<string name="tab_recent">最近的</string>
+	<string name="tab_tags">選項卡</string>
+	<string name="menu_add">新增書簽</string>
+	<string name="menu_search">搜尋選項卡</string>
+	<string name="login_title">登陸</string>
+	<string name="login_message">請輸入您的Del.icio.us使用者名和密碼</string>
+	<string name="validate_button">確認</string>
+	<string name="msg_credentials_valid">使用者名和密碼是有效的。</string>
+	<string name="msg_credentials_invalid">無效的使用者名和密碼！
+	</string>
+	<string name="pref_delicious_login">登陸憑證</string>
+	<string name="pref_delicious_login_summary">設定使用者名和密碼</string>
+	<string name="login_validate_title">確認</string>
+	<string name="login_validate_message">確認使用者名和密碼</string>
+	<string name="private_label">保護隱私</string>
+	<string name="pref_delicious_private">保護隱私</string>
+	<string name="pref_delicious_private_summary">新書簽預設隱私</string>
+	<string name="tags_suggest_title">選項卡建議</string>
+	<string name="tags_suggest_message">檢索選項卡建議</string>
+	<string name="adding_bookmark_message">提交書簽到Del.icio.us
+	</string>
+	<string name="add_bookmark_failed_message">新增書簽到Del.icio.us失敗
+	</string>
+	<string name="fetching_title_message">檢索中...</string>
+	<string name="loading_message">載入中...</string>
+	<string name="load_failed">載入資料失敗</string>
+	<string name="search_label">搜尋</string>
+	<string name="search_hint">您的del.icio.us選項卡</string>
+	<string name="pref_suggest_enable">推薦選項卡</string>
+	<string name="pref_suggest_enable_summary">提供自動完成的建議</string>
+	<string name="fetching_tags_message">檢索完成選項卡清單。這可能需要數分鐘...</string>
+	<string name="fetch_tags_failed_message">選項卡清單檢索失敗</string>
+	<string name="recent_header_title">您最近的書簽</string>
+	<string name="search_header_title">搜尋結果
+	</string>
+	<string name="app_description">分享連線到Del.icio.us</string>
+	<string name="disclaimer_message">Beelicious目的是希望這將是有益的，但沒有任何保證，甚至 隱含的保證或適合供某特定目的。請參閱GNU通用公共授權查閱更多細節。\n\nBeelicious是免費軟體: 你可以在GNU通用公共授權下傳播和/或修改它，或是第3版的授權，或者(依你的選擇)任何更高版本。\n你沒有收到一份帶有Beelicious的GNU通用公共授權，檢視 http://www.gnu.org/licenses.</string>
+	<string name="loading_additional_message">更多結果載入中...</string>
+	<string name="disclaimer_yahoo_message">本程式與Yahoo!或Del.icio.us沒有任何的支援及聯絡。</string>
+	<string name="pref_tags_title">選項卡</string>
+	<string name="pref_suggest_sync">同步選項卡</string>
+	<string name="pref_suggest_sync_summary">與Del.icio.us同步選項卡清單</string>
+	<string name="pref_suggest_sync_last">上次同步</string>
+	<string name="menu_tagcloud">選項卡云</string>
+	<string name="cloud_title">選項卡云</string>
+	<string name="pref_cloud_logarithmic">對數云</string>
+	<string name="pref_cloud_logarithmic_summary_enabled">選項卡云使用對數字型縮放</string>
+	<string name="pref_cloud_logarithmic_summary_disabled">選項卡云使用線性字型縮放</string>
+	<string name="tags_sync_confirm_title">同步選項卡</string>
+	<string name="tags_sync_confirm_message">整個清單的選項卡將會被取來。這可能需要數分鐘。繼續？</string>
+<string name="tags_suggest_empty">沒有選項卡建議。</string>
+<string name="tag_suggest_available">選項卡建議可用。</string>
+</resources>

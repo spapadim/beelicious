@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2009 Netdragon Websoft Inc (http://ir.netdragon.us/) 
+                    <whynonnazheng@gmail.com>
+ 
+     This file is part of Bitlicious.
+ 
+     Bitlicious is free software: you can redistribute it and/or modify
+     it under the terms of the GNU General Public License as published by
+     the Free Software Foundation, either version 3 of the License, or
+     (at your option) any later version.
+  
+     Bitlicious is distributed in the hope that it will be useful,
+     but WITHOUT ANY WARRANTY; without even the implied warranty of
+     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+     GNU General Public License for more details.
+
+     You should have received a copy of the GNU General Public License
+     along with Bitlicious.  If not, see <http://www.gnu.org/licenses/>.
+ -->
+<resources>
+
+	<string name="app_name">Beelicious</string>
+	<string name="title_label">标题</string>
+	<string name="url_label">URL</string>
+	<string name="comments_label">注释</string>
+	<string name="tags_label">标签</string>
+
+	<string name="tag_suggestions_label">标签建议</string>
+	<string name="pref_account_title">账户设置</string>
+	<string name="pref_delicious_username">用户名</string>
+	<string name="pref_delicious_password">密码</string>
+	<string name="pref_android_tag_name">Android标记名称</string>
+	<string name="pref_android_tag_enable">添加Android标签</string>
+	<string name="pref_android_tag_enable_summary">自动添加自定义标签</string>
+	<string name="pref_android_tag_name_default">android:bookmarks</string>
+	<string name="pref_defaults_title">默认</string>
+	<string name="ok_button">确认</string>
+	<string name="cancel_button">取消</string>
+
+	<string name="menu_settings">设置</string>
+	<string name="add_bookmark_title">Beelicious</string>
+	<string name="tab_popular">受欢迎的</string>
+	<string name="tab_recent">最近的</string>
+	<string name="tab_tags">标签</string>
+	<string name="menu_add">添加书签</string>
+	<string name="menu_search">搜索标签</string>
+	<string name="login_title">登陆</string>
+	<string name="login_message">请输入您的Del.icio.us用户名和密码</string>
+	<string name="validate_button">确认</string>
+	<string name="msg_credentials_valid">用户名和密码是有效的。</string>
+	<string name="msg_credentials_invalid">无效的用户名和密码！
+	</string>
+	<string name="pref_delicious_login">登陆证书</string>
+	<string name="pref_delicious_login_summary">设置用户名和密码</string>
+	<string name="login_validate_title">确认</string>
+	<string name="login_validate_message">确认用户名和密码</string>
+	<string name="private_label">保护隐私</string>
+	<string name="pref_delicious_private">保护隐私</string>
+	<string name="pref_delicious_private_summary">新书签默认隐私</string>
+	<string name="tags_suggest_title">标签建议</string>
+	<string name="tags_suggest_message">检索标签建议</string>
+	<string name="adding_bookmark_message">提交书签到Del.icio.us
+	</string>
+	<string name="add_bookmark_failed_message">添加书签到Del.icio.us失败
+	</string>
+	<string name="fetching_title_message">检索中...</string>
+	<string name="loading_message">载入中...</string>
+	<string name="load_failed">载入数据失败</string>
+	<string name="search_label">搜索</string>
+	<string name="search_hint">您的del.icio.us标签</string>
+	<string name="pref_suggest_enable">推荐标签</string>
+	<string name="pref_suggest_enable_summary">提供自动完成的建议</string>
+	<string name="fetching_tags_message">检索完成标签列表。这可能需要数分钟...</string>
+	<string name="fetch_tags_failed_message">标签列表检索失败</string>
+	<string name="recent_header_title">您最近的书签</string>
+	<string name="search_header_title">搜索结果
+	</string>
+	<string name="app_description">分享连接到Del.icio.us</string>
+	<string name="disclaimer_message">Beelicious目的是希望这将是有益的，但没有任何担保，甚至 隐含的担保或适合供某特定目的。请参阅GNU通用公共许可查阅更多细节。\n\nBeelicious是免费软件: 你可以在GNU通用公共许可下传播和/或修改它，或是第3版的授权，或者(根据你的选择)任何更高版本。\n你没有收到一份带有Beelicious的GNU通用公共许可，查看 http://www.gnu.org/licenses.</string>
+	<string name="loading_additional_message">更多结果载入中...</string>
+	<string name="disclaimer_yahoo_message">本程序与Yahoo!或Del.icio.us没有任何的支持及联系。</string>
+	<string name="pref_tags_title">标签</string>
+	<string name="pref_suggest_sync">同步标签</string>
+	<string name="pref_suggest_sync_summary">与Del.icio.us同步标签列表</string>
+	<string name="pref_suggest_sync_last">上次同步</string>
+	<string name="menu_tagcloud">标签云</string>
+	<string name="cloud_title">标签云</string>
+	<string name="pref_cloud_logarithmic">对数云</string>
+	<string name="pref_cloud_logarithmic_summary_enabled">标签云使用对数字体缩放</string>
+	<string name="pref_cloud_logarithmic_summary_disabled">标签云使用线性字体缩放</string>
+	<string name="tags_sync_confirm_title">同步标签</string>
+	<string name="tags_sync_confirm_message">整个列表的标签将会被取来。这可能需要数分钟。继续？</string>
+<string name="tags_suggest_empty">没有标签建议。</string>
+<string name="tag_suggest_available">标签建议可用。</string>
+</resources>
