@@ -232,6 +232,17 @@ public class BookmarkActivity extends Activity {
         		Browser.BOOKMARKS_URI.equals(intent.getData())) {
         	url = intent.getStringExtra("url");
             title = intent.getStringExtra("title");
+        } else if (Intent.ACTION_INSERT.equals(action) &&
+                intent.hasExtra(SimpleSyncService.EXTRA_BOOKMARK)) {
+            Bookmark bm = intent.getParcelableExtra(SimpleSyncService.EXTRA_BOOKMARK);
+            boolean shared = intent.getBooleanExtra(SimpleSyncService.EXTRA_SHARED, true);
+            url = bm.getUrl();
+            title = bm.getDescription();
+            mCommentsEdit.setText(bm.getExtended());
+            mTagsEdit.setText(bm.getTags());
+            mPrivateCheck.setChecked(!shared);
+            // Date should be updated, so we ignore it
+            // FIXME meta and hash should be preserved, even though currently unused
         }
         
         if (url != null) {
@@ -334,7 +345,6 @@ public class BookmarkActivity extends Activity {
     private static final int MSG_TAG_SUGGEST = R.id.tagsButton;
     private static final int MSG_TAG_SUGGEST_PREFETCH = R.id.tagsEdit;
     private static final int MSG_HTML_TITLE_SET = R.id.titleEdit;
-    private static final int MSG_BOOKMARK_ADDED = R.id.urlEdit;
     
     private static final ActivityHandler<BookmarkActivity> sResultHandler = 
     	new ActivityHandler<BookmarkActivity>() {
@@ -383,19 +393,6 @@ public class BookmarkActivity extends Activity {
 				activity.mTitleEdit.setEnabled(true);
 				activity.mTitleEdit.setText((String)msg.obj);
 				break;
-			case MSG_BOOKMARK_ADDED:
-				activity.dismissDialog(ID_ADD_BOOKMARK_PROGRESS_DIALOG);				
-				boolean success = (msg.arg1 != 0);
-				if (success) {
-					// Terminate activity with success result code
-					activity.setResult(Activity.RESULT_OK);
-					activity.finish();
-				} else {
-					// Notify user that we failed
-					Toast.makeText(activity, R.string.add_bookmark_failed_message, Toast.LENGTH_LONG)
-						.show();
-				}
-				break;
 			}
     	}
     };
@@ -424,8 +421,7 @@ public class BookmarkActivity extends Activity {
     }		
     
     private static final int ID_SUGGEST_PROGRESS_DIALOG = 1;
-    private static final int ID_ADD_BOOKMARK_PROGRESS_DIALOG = 2;
-    private static final int ID_SUGGESTIONS_DIALOG = 3;
+    private static final int ID_SUGGESTIONS_DIALOG = 2;
 
     @Override
 	protected Dialog onCreateDialog(int id) {
@@ -434,10 +430,6 @@ public class BookmarkActivity extends Activity {
 			ProgressDialog suggestDlg = new ProgressDialog(this);
 			suggestDlg.setMessage(getText(R.string.tags_suggest_message));
 			return suggestDlg;
-		case ID_ADD_BOOKMARK_PROGRESS_DIALOG:
-			ProgressDialog bookmarkDlg = new ProgressDialog(this);
-			bookmarkDlg.setMessage(getText(R.string.adding_bookmark_message));
-			return bookmarkDlg;
 		case ID_SUGGESTIONS_DIALOG:
 			return createTagSuggestionsDialog();
 		default:
@@ -446,23 +438,19 @@ public class BookmarkActivity extends Activity {
 	}
 
     private void postBookmark() {
+        // Gather field values
     	final String url = mUrlEdit.getText().toString();
     	final String title = mTitleEdit.getText().toString();
     	final String comments = mCommentsEdit.getText().toString();
     	final String tags = mTagsEdit.getText().toString();
     	final boolean shared = !mPrivateCheck.isChecked();
+
+    	// Submit request in background to service
+        Bookmark bookmark = new Bookmark(url, title, comments, tags);
+        SimpleSyncService.actionSubmitBookmark(this, bookmark, shared);
     	
-    	Thread addBookmarkThread = new Thread() {
-    		@Override
-    		public void run () {
-    			Bookmark bm = new Bookmark(url, title, comments, tags);
-    			boolean success = mDeliciousClient.addBookmark(bm, true, shared);
-    			Message msg = sResultHandler.obtainMessage(MSG_BOOKMARK_ADDED);
-    			msg.arg1 = success ? 1 : 0;
-    			sResultHandler.sendMessage(msg);
-    		}
-    	};
-    	showDialog(ID_ADD_BOOKMARK_PROGRESS_DIALOG);
-    	addBookmarkThread.start();
+        // Terminate activity with success result code
+        setResult(Activity.RESULT_OK);
+        finish();
     }
 }

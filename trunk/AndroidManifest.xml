@@ -1,17 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-	package="net.bitquill.delicious" android:versionCode="4" android:versionName="0.1.3">
-	<uses-sdk android:minSdkVersion="1"/>
+	package="net.bitquill.delicious" android:versionCode="4"
+	android:versionName="0.1.3">
+	<uses-sdk android:minSdkVersion="1" />
 	<application android:icon="@drawable/icon" android:label="@string/app_name"
-		android:name=".DeliciousApp" android:description="@string/app_description" android:debuggable="false">
+		android:name=".DeliciousApp" android:description="@string/app_description"
+		android:debuggable="false">
 		<activity android:label="@string/add_bookmark_title"
 			android:icon="@drawable/icon" android:launchMode="singleTop"
 			android:name=".BookmarkActivity" android:configChanges="keyboardHidden|orientation">
 
 			<intent-filter>
-				<action android:name="android.intent.action.SEND"/>
+				<action android:name="android.intent.action.SEND" />
 				<category android:name="android.intent.category.DEFAULT">/</category>
-				<data android:mimeType="text/plain"/>
+				<data android:mimeType="text/plain" />
 			</intent-filter>
 			<intent-filter>
 				<action android:name="android.intent.action.INSERT" />
@@ -30,14 +32,24 @@
 				<category android:name="android.intent.category.LAUNCHER" />
 			</intent-filter>
 			<intent-filter>
-				<action android:name="android.intent.action.SEARCH"></action>
-				<category android:name="android.intent.category.DEFAULT"></category>
+				<action android:name="android.intent.action.SEARCH" />
+				<category android:name="android.intent.category.DEFAULT" />
 			</intent-filter>
 			<meta-data android:resource="@xml/searchable" android:name="android.app.searchable"></meta-data>
 		</activity>
 		<activity android:label="@string/login_title"
-			android:launchMode="singleTop" android:name=".LoginActivity" android:configChanges="keyboardHidden|orientation"></activity>
-		<activity android:name=".CloudActivity" android:launchMode="singleTop" android:label="@string/cloud_title" android:configChanges="keyboardHidden|orientation"></activity>
+			android:launchMode="singleTop" android:name=".LoginActivity"
+			android:configChanges="keyboardHidden|orientation" />
+		<activity android:name=".CloudActivity" android:launchMode="singleTop"
+			android:label="@string/cloud_title" android:configChanges="keyboardHidden|orientation" />
+        <activity android:name=".TagListActivity" android:launchMode="singleTop"
+            android:label="@string/taglist_title" android:configChanges="keyboardHidden|orientation" />
+
+		<service android:name=".SimpleSyncService" android:exported="false" />
 	</application>
-	<uses-permission android:name="android.permission.INTERNET"></uses-permission>
+	
+	<uses-permission android:name="android.permission.INTERNET" />
+	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+
+
 </manifest> 
