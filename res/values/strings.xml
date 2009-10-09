@@ -76,9 +76,13 @@
 	<string name="disclaimer_yahoo_message">This application is in no way affiliated with
 		or endorsed by either Yahoo! or Del.icio.us.</string>
 	<string name="pref_tags_title">Tags</string>
-	<string name="pref_suggest_sync">Sync tags</string>
+	<string name="pref_suggest_sync">Sync tags now</string>
 	<string name="pref_suggest_sync_summary">Sync tag list with Del.icio.us</string>
+	<string name="pref_suggest_sync_summary_prefix">Last synced </string>
 	<string name="pref_suggest_sync_last">Last sync</string>
+	<string name="pref_suggest_bg_sync">Periodic tag sync</string>
+	<string name="pref_suggest_bg_sync_summary">Sync tags in the background</string>
+	<string name="taglist_title">Tags</string>
 	<string name="menu_tagcloud">Tag cloud</string>
 	<string name="cloud_title">Tag cloud</string>
 	<string name="pref_cloud_logarithmic">Logarithmic cloud</string>
@@ -87,6 +91,13 @@
 	<string name="tags_sync_confirm_title">Sync tags</string>
 	<string name="tags_sync_confirm_message">The entire list of tags has to be fetched. This
 		may take up to several minutes. Proceed?</string>
-<string name="tags_suggest_empty">No tag suggestions.</string>
-<string name="tag_suggest_available">tag suggestions available.</string>
+    <string name="tags_suggest_empty">No tag suggestions.</string>
+    <string name="tag_suggest_available">tag suggestions available.</string>
+    
+    <string name="notify_sync_title">Syncing tags</string>
+    <string name="notify_sync_text"></string>
+    <string name="notify_submit_title">Submitting bookmark</string>
+    <string name="notify_submit_text"></string>
+    <string name="notify_error_title">Bookmark submission failed</string>
+    <string name="notify_error_text"></string>
 </resources>

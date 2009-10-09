@@ -73,6 +73,7 @@ public final class TagsCache {
 		DeliciousClient deliciousClient = DeliciousApp.getInstance().mDeliciousClient;
 		DatabaseHelper helper = new DatabaseHelper(context);
 		SQLiteDatabase db = helper.getWritableDatabase();
+		boolean success = false;
 		
 		try {
 			Map<String,Integer> tags = deliciousClient.getTags();
@@ -81,6 +82,7 @@ public final class TagsCache {
 					.show();
 				return;
 			}
+			db.beginTransaction();
 			db.delete("tags", null, null); // Delete all rows
 			ContentValues values = new ContentValues();
 			for (Map.Entry<String,Integer> e : tags.entrySet()) {
@@ -88,16 +90,21 @@ public final class TagsCache {
 				values.put("count", e.getValue());
 				db.insert("tags", null, values);
 			}
+			db.setTransactionSuccessful();
+			success = true;
 		} finally {
+			db.endTransaction();
 			db.close();
 		}
-		
+
 		// Save update date to preferences
-		SharedPreferences settings = 
-			context.getSharedPreferences(DeliciousApp.PREFS_NAME, Context.MODE_PRIVATE);
-		Editor editor = settings.edit();
-		editor.putString(PREF_KEY_UPDATE, Bookmark.utcString(new Date()));
-		editor.commit();
+		if (success) {
+			SharedPreferences settings = 
+				context.getSharedPreferences(DeliciousApp.PREFS_NAME, Context.MODE_PRIVATE);
+			Editor editor = settings.edit();
+			editor.putString(PREF_KEY_UPDATE, Bookmark.utcString(new Date()));
+			editor.commit();
+		}
 	}
 	
 	public static final Date getLastSyncDate (Context context) {
@@ -111,12 +118,7 @@ public final class TagsCache {
 		} catch (ParseException e) { }
 		return null;
 	}
-	
-	public static final void checkSync (Context context) {
-		Date lastUpdate = getLastSyncDate(context);
-		// TODO - check first
-	}
-	
+		
 	/**
 	 * Return a cursor, sorted by count descending.
 	 * @param context

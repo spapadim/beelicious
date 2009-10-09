@@ -30,6 +30,7 @@ import android.os.Message;
 import android.preference.CheckBoxPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
+import android.text.format.DateUtils;
 
 public class SettingsActivity extends PreferenceActivity 
 	implements Preference.OnPreferenceChangeListener, Preference.OnPreferenceClickListener {
@@ -38,16 +39,14 @@ public class SettingsActivity extends PreferenceActivity
 	
 	@Override
 	public void onDestroy () {
-		sHandler.setActivity(null);
-		super.onDestroy();
+	    // XXX do first tag sync here?
+	    super.onDestroy();
 	}
 	
 	@Override
 	protected void onCreate (Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
-		sHandler.setActivity(this);
-		
+				
 		getPreferenceManager().setSharedPreferencesName(DeliciousApp.PREFS_NAME);
 		
 		Date lastSyncDate = TagsCache.getLastSyncDate(this);
@@ -64,26 +63,18 @@ public class SettingsActivity extends PreferenceActivity
 		p.setSummary(getPreferenceScreen().getSharedPreferences()
 				.getString("android_tag_name", 
 						getText(R.string.pref_android_tag_name_default).toString()));
-		
 		p = findPreference("suggest_enable");
 		p.setOnPreferenceChangeListener(this);
 		p = findPreference("suggest_sync");
 		p.setOnPreferenceClickListener(this);
-		// TODO - add last update date (when android.text.format.DateUtils is released)
+		if (lastSyncDate != null) {
+		    p.setSummary(getText(R.string.pref_suggest_sync_summary_prefix).toString() + 
+		            DateUtils.getRelativeTimeSpanString(lastSyncDate.getTime()));
+		}
+		p = findPreference("suggest_bg_sync");
+		p.setOnPreferenceClickListener(this);
 	}
 	
-	private void fetchTags () {
-		Thread tagsThread = new Thread() {
-			@Override
-			public void run () {
-				TagsCache.syncTags(DeliciousApp.getInstance()); // XXX - check!
-				sHandler.sendEmptyMessage(MSG_SYNC_COMPLETE);
-			}
-		};
-		showDialog(ID_PROGRESS_DIALOG);
-		tagsThread.start();		
-	}
-
 	@Override
 	public boolean onPreferenceChange(Preference preference, Object newValue) {
 		if ("android_tag_name".equals(preference.getKey())) {
@@ -92,49 +83,22 @@ public class SettingsActivity extends PreferenceActivity
 		} else if ("suggest_enable".equals(preference.getKey())) {
 			boolean enabled = ((Boolean)newValue).booleanValue();
 			if (enabled && mNeverSynced) {
-				showDialog(ID_SYNC_CONFIRM_DIALOG);
+			    mNeverSynced = false; // FIXME if on EDGE, sync won't happen
+				SimpleSyncService.actionSyncTags(this);
 			}
 			return true;
+		} else if ("suggest_bg_sync".equals(preference.getKey())) {
+		    boolean enabled = ((Boolean)newValue).booleanValue();
+		    if (enabled) {
+		        SimpleSyncService.syncSchedule(this, DateUtils.MINUTE_IN_MILLIS * 60); // TODO - make interval a setting
+		    } else {
+		        SimpleSyncService.syncCancel(this);
+		    }
+		    return true;
 		}
 		return false;
 	}
 	
-	private static final int ID_PROGRESS_DIALOG = 1;
-	private static final int ID_SYNC_CONFIRM_DIALOG = 2;
-	
-	@Override
-	protected Dialog onCreateDialog (int id) {
-		switch(id) {
-		case ID_PROGRESS_DIALOG:
-			ProgressDialog progressDlg = new ProgressDialog(this);
-			progressDlg.setMessage(getText(R.string.fetching_tags_message));
-			return progressDlg;
-		case ID_SYNC_CONFIRM_DIALOG:
-			AlertDialog confirmDlg = new AlertDialog.Builder(this)
-				.setTitle(R.string.tags_sync_confirm_title)
-				.setMessage(R.string.tags_sync_confirm_message)
-				.setPositiveButton(R.string.ok_button, new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick (DialogInterface dialog, int which) {
-						fetchTags();
-					}
-				})
-				.setNegativeButton(R.string.cancel_button, new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick (DialogInterface dialog, int which) {
-						if (mNeverSynced) {
-							CheckBoxPreference p = (CheckBoxPreference)findPreference("suggest_enable");
-							p.setChecked(false);
-						}
-					}
-				})
-				.create();
-			return confirmDlg;
-		default:
-			return super.onCreateDialog(id);
-		}
-	}
-
 	@Override
 	public boolean onPreferenceClick(Preference preference) {
 		if ("delicious_login".equals(preference.getKey())) {
@@ -142,29 +106,9 @@ public class SettingsActivity extends PreferenceActivity
 			startActivity(i);
 			return true;
 		} else if ("suggest_sync".equals(preference.getKey())) {
-			showDialog(ID_SYNC_CONFIRM_DIALOG);
+			SimpleSyncService.actionSyncTags(this);
 		}
 		return false;
 	}
 	
-	// Assign "random" message IDs
-	private static final int MSG_SYNC_COMPLETE = R.id.usernameEdit;
-	
-	private static final ActivityHandler<SettingsActivity> sHandler = 
-		new ActivityHandler<SettingsActivity>() {
-		@Override
-		public void handleMessage(Message msg) {
-			switch (msg.what) {
-			case MSG_SYNC_COMPLETE:
-				SettingsActivity activity = getActivity();
-				if (activity == null) {
-					// FIXME - This can potentially hang the application??
-					break;
-				}
-				activity.mNeverSynced = false;
-				activity.dismissDialog(ID_PROGRESS_DIALOG);
-				break;
-			}
-		}
-	};
 }

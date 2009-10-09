@@ -6,12 +6,23 @@
 	</PreferenceCategory>
 	<PreferenceCategory android:title="@string/pref_tags_title">
 		<CheckBoxPreference android:title="@string/pref_suggest_enable"
-			android:summary="@string/pref_suggest_enable_summary" android:key="suggest_enable"
-			android:disableDependentsState="false"/>
+			android:summary="@string/pref_suggest_enable_summary" 
+			android:key="suggest_enable"
+			android:disableDependentsState="false" />
+	    <CheckBoxPreference android:title="@string/pref_suggest_bg_sync"
+	        android:summary="@string/pref_suggest_bg_sync_summary"
+	        android:key="suggest_bg_sync" 
+	        android:dependency="suggest_enable" />
 		<Preference android:title="@string/pref_suggest_sync"
 			android:key="suggest_sync" android:summary="@string/pref_suggest_sync_summary"
-			android:dependency="suggest_enable"/>
-	<CheckBoxPreference android:summaryOn="@string/pref_cloud_logarithmic_summary_enabled" android:summaryOff="@string/pref_cloud_logarithmic_summary_disabled" android:dependency="suggest_enable" android:defaultValue="true" android:key="cloud_logarithmic" android:title="@string/pref_cloud_logarithmic" android:summary="@string/pref_cloud_logarithmic_summary_enabled"></CheckBoxPreference>
+			android:dependency="suggest_enable" />
+	<CheckBoxPreference android:summaryOn="@string/pref_cloud_logarithmic_summary_enabled" 
+	        android:summaryOff="@string/pref_cloud_logarithmic_summary_disabled" 
+	        android:dependency="suggest_enable" 
+	        android:defaultValue="true" 
+	        android:key="cloud_logarithmic" 
+	        android:title="@string/pref_cloud_logarithmic" 
+	        android:summary="@string/pref_cloud_logarithmic_summary_enabled" />
 </PreferenceCategory>
 	<PreferenceCategory android:title="@string/pref_defaults_title">
 		<CheckBoxPreference android:key="android_tag_enable"

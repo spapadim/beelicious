@@ -26,11 +26,14 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 /**
  * Simple immutable class to encapsulate all Del.icio.us bookmark fields.
  * See http://www.delicious.com/help/api for details.
  */
-public final class Bookmark {
+public final class Bookmark implements Parcelable {
 	private String url, description, extended, tags;
 	private Date date;
 	private String meta; // optional field
@@ -105,6 +108,53 @@ public final class Bookmark {
 		this.extended = extended;
 		this.tags = tags;
 		this.date = (Date) date.clone();
+	}
+	
+	private Bookmark (Parcel in) {
+	    this.url = in.readString();
+	    this.description = in.readString();
+	    this.extended = in.readString();
+	    this.tags = in.readString();
+	    try {
+	        this.date = utcParse(in.readString());
+	    } catch (ParseException pe) {
+	        this.date = new Date(); // XXX 
+	    }
+	    int hasMeta = in.readInt();
+	    if (hasMeta != 0) {
+	        this.meta = in.readString();
+	    }
+	}
+	
+	@Override
+	public void writeToParcel(Parcel out, int flags) {
+	    out.writeString(this.url);
+	    out.writeString(this.description);
+	    out.writeString(this.extended);
+	    out.writeString(this.tags);
+	    out.writeString(utcString(this.date));
+	    if (this.meta == null) {
+	        out.writeInt(0);
+	    } else {
+	        out.writeInt(1);
+	        out.writeString(this.meta);
+	    }
+	}
+	
+	public static final Parcelable.Creator<Bookmark> CREATOR 
+	    = new Parcelable.Creator<Bookmark>() {
+	        public Bookmark createFromParcel(Parcel in) {
+	            return new Bookmark(in);
+	        }
+
+	        public Bookmark[] newArray(int size) {
+	            return new Bookmark[size];
+	        }
+	};
+	
+	@Override
+	public int describeContents () {
+	    return 0;
 	}
 	
 	public Bookmark (String url, String description, 
