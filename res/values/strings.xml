@@ -11,6 +11,7 @@
 	<string name="pref_account_title">Account settings</string>
 	<string name="pref_delicious_username">Username</string>
 	<string name="pref_delicious_password">Password</string>
+	<string name="pref_endpoint">Service</string>
 	<string name="pref_android_tag_name">Android tag name</string>
 	<string name="pref_android_tag_enable">Add Android tag</string>
 	<string name="pref_android_tag_enable_summary">Automatically add custom tag</string>
@@ -27,7 +28,7 @@
 	<string name="menu_add">Add bookmark</string>
 	<string name="menu_search">Search tags</string>
 	<string name="login_title">Login</string>
-	<string name="login_message">Please enter your Del.icio.us username and
+	<string name="login_message">Please enter your username and
 		password</string>
 	<string name="validate_button">Validate</string>
 	<string name="msg_credentials_valid">Username and password are valid.</string>
@@ -51,10 +52,6 @@
 	<string name="load_failed">Failed to load data</string>
 	<string name="search_label">Search</string>
 	<string name="search_hint">Your del.icio.us tags</string>
-	<string name="pref_suggest_enable">Suggest tags</string>
-	<string name="pref_suggest_enable_summary">Provide autocomplete suggestions</string>
-	<string name="fetching_tags_message">Retrieving complete tag list. This may
-		take up to several minutes...</string>
 	<string name="fetch_tags_failed_message">Tag list retrieval failed</string>
 	<string name="recent_header_title">Your recent bookmarks</string>
 	<string name="search_header_title">Search results</string>
@@ -75,14 +72,15 @@
 	<string name="loading_additional_message">Loading additional results...</string>
 	<string name="disclaimer_yahoo_message">This application is in no way affiliated with
 		or endorsed by either Yahoo! or Del.icio.us.</string>
-	<string name="pref_tags_title">Tags</string>
-	<string name="pref_suggest_sync">Sync tags now</string>
-	<string name="pref_suggest_sync_summary">Sync tag list with Del.icio.us</string>
-	<string name="pref_suggest_sync_summary_prefix">Last synced </string>
-	<string name="pref_suggest_sync_last">Last sync</string>
-	<string name="pref_suggest_bg_sync">Periodic tag sync</string>
-	<string name="pref_suggest_bg_sync_summary">Sync tags in the background</string>
+	<string name="pref_sync_title">Tag sync</string>
+	<string name="pref_tag_sync">Sync tags now</string>
+	<string name="pref_tag_sync_summary">Sync tag list with Del.icio.us</string>
+	<string name="pref_tag_sync_summary_prefix">Last synced </string>
+	<string name="pref_tag_sync_last">Last sync</string>
+	<string name="pref_tag_bg_sync">Tag sync interval</string>
+	<string name="pref_tag_bg_sync_summary">Background sync interval</string>
 	<string name="taglist_title">Tags</string>
+	<string name="msg_taglist_empty">No tags; was the first sync successfully completed?</string>
 	<string name="menu_tagcloud">Tag cloud</string>
 	<string name="cloud_title">Tag cloud</string>
 	<string name="pref_cloud_logarithmic">Logarithmic cloud</string>
@@ -95,9 +93,18 @@
     <string name="tag_suggest_available">tag suggestions available.</string>
     
     <string name="notify_sync_title">Syncing tags</string>
-    <string name="notify_sync_text"></string>
+    <string name="notify_sync_text">Fetching tags into suggestions cache</string>
     <string name="notify_submit_title">Submitting bookmark</string>
-    <string name="notify_submit_text"></string>
+    <string name="notify_submit_text">Sending bookmark to Del.icio.us</string>
     <string name="notify_error_title">Bookmark submission failed</string>
-    <string name="notify_error_text"></string>
+    <string name="notify_error_text">Error submitting bookmark to Del.icio.us</string>
+    
+    <string name="menu_view">View webpage</string>
+    <string name="menu_edit">Edit bookmark</string>
+    <string name="menu_delete">Delete bookmark</string>
+    
+    <string name="pref_sync_on_2g">Sync on 2G networks</string>
+    <string name="pref_sync_on_2g_summary">Don't skip sync when on 2G; enable if you don't have a 3G plan</string>
+    <string name="pref_sync_on_2g_summary_on">Sync even on 2G networks</string>
+    <string name="pref_sync_on_2g_summary_off">Sync only on 3G or WiFi</string>
 </resources>

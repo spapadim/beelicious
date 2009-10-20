@@ -19,6 +19,7 @@
 package net.bitquill.delicious.api;
 
 import java.io.IOException;
+import java.net.URI;
 import java.net.URLEncoder;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -57,6 +58,7 @@ import org.xmlpull.v1.XmlPullParserFactory;
  */
 public final class DeliciousClient {
 
+    private String mApiEndpoint = API_ENDPOINT_DEFAULT;
 	private UsernamePasswordCredentials mCredentials;
 	private DefaultHttpClient mHttpClient;
 	private XmlPullParserFactory mXmlParserFactory;
@@ -68,8 +70,7 @@ public final class DeliciousClient {
 		" Apache-HttpClient/UNAVAILABLE" + 
 		" spapadim@cs.cmu.edu";
 	
-	public static final String API_HOSTNAME = "api.del.icio.us";
-	public static final String API_ENDPOINT = "https://api.del.icio.us/v1/";
+	public static final String API_ENDPOINT_DEFAULT = "https://api.del.icio.us/v1/";
 	
 	public static final String API_POSTS_UPDATE = "posts/update";
 	public static final String API_POSTS_ADD = "posts/add?";
@@ -103,11 +104,14 @@ public final class DeliciousClient {
 	public static final String API_VALUE_NO = "no";
 	public static final String API_VALUE_YES = "yes";
 	
-	public static final String FEEDS_ENDPOINT = "http://feeds.delicious.com/v2/json/";
-	
-	public static final String FEEDS_POPULAR = "popular/";
+	//public static final String FEEDS_ENDPOINT = "http://feeds.delicious.com/v2/json/";
+	//public static final String FEEDS_POPULAR = "popular/";
 	
 	public DeliciousClient () {
+	    this(API_ENDPOINT_DEFAULT);
+	}
+	
+	public DeliciousClient (String endpoint) {
 		// Create HTTP client and set parameters
 		HttpParams params = new BasicHttpParams();
 		HttpProtocolParams.setVersion(params, HttpVersion.HTTP_1_1);
@@ -120,6 +124,7 @@ public final class DeliciousClient {
 		registry.register(new Scheme("https", SSLSocketFactory.getSocketFactory(), 443));
 		ThreadSafeClientConnManager connManager = new ThreadSafeClientConnManager(params, registry);
 		mHttpClient = new DefaultHttpClient(connManager, params);
+		setApiEndpoint(endpoint);
 	}
 	
 	private final XmlPullParser getXmlParser (HttpEntity e) 
@@ -185,11 +190,23 @@ public final class DeliciousClient {
 		}
 	}
 	
+	public final void setApiEndpoint (String endpoint) {
+	    mApiEndpoint = endpoint;
+	}
+	
+	public final String getApiEndpoint () {
+	    return mApiEndpoint;
+	}
+	
+	private String getApiHostname () {
+	    return URI.create(mApiEndpoint).getHost();
+	}
+	
 	public final void setCredentials (String username, String password) {
 		if (username != null && password != null) {
 			mCredentials = new UsernamePasswordCredentials(username, password);
 			mHttpClient.getCredentialsProvider()
-				.setCredentials(new AuthScope(API_HOSTNAME, AuthScope.ANY_PORT), 
+				.setCredentials(new AuthScope(getApiHostname(), AuthScope.ANY_PORT), 
 								mCredentials);
 		}
 	}
@@ -268,7 +285,7 @@ public final class DeliciousClient {
 	}
 	
 	public final String lastUpdate () {
-		HttpGet get = new HttpGet(API_ENDPOINT + API_POSTS_UPDATE);
+		HttpGet get = new HttpGet(mApiEndpoint + API_POSTS_UPDATE);
 		HttpEntity e;
 		try {
 			HttpResponse resp = mHttpClient.execute(get);
@@ -307,7 +324,7 @@ public final class DeliciousClient {
 			return false;
 		}
 		
-		String reqUrl = API_ENDPOINT + API_POSTS_ADD +
+		String reqUrl = mApiEndpoint + API_POSTS_ADD +
 			API_PARAM_URL + URLEncoder.encode(url) + "&" +
 			API_PARAM_DESCRIPTION + URLEncoder.encode(description);
 		if (extended != null && !"".equals(extended)) {
@@ -335,7 +352,7 @@ public final class DeliciousClient {
 	}
 		
 	public final Map<String,Integer> getTags () {
-		HttpGet get = new HttpGet(API_ENDPOINT + API_TAGS_GET);
+		HttpGet get = new HttpGet(mApiEndpoint + API_TAGS_GET);
 
 		HttpEntity e;
 		try {
@@ -371,7 +388,7 @@ public final class DeliciousClient {
 	}
 	
 	public final List<String> suggestTags (String url) {
-		HttpGet get = new HttpGet(API_ENDPOINT + API_POSTS_SUGGEST + 
+		HttpGet get = new HttpGet(mApiEndpoint + API_POSTS_SUGGEST + 
 					API_PARAM_URL + URLEncoder.encode(url));
 		
 		HttpEntity e;
@@ -458,7 +475,7 @@ public final class DeliciousClient {
 			count = 100;  // Delicious does not allow values larger than 100 
 		}
 		// Construct initial url string
-		String reqUrl = API_ENDPOINT + API_POSTS_RECENT +
+		String reqUrl = mApiEndpoint + API_POSTS_RECENT +
 			API_PARAM_COUNT + count;
 		// Append tag, if given
 		if (tag != null) {
@@ -476,7 +493,7 @@ public final class DeliciousClient {
 	}
 	
 	public final BookmarkSearchResults searchBookmarks (String tag, int results, int start) {
-		String reqUrl = API_ENDPOINT + API_POSTS_ALL +
+		String reqUrl = mApiEndpoint + API_POSTS_ALL +
 			API_PARAM_TAG + tag;
 		if (results > 0) {
 			reqUrl += "&" + API_PARAM_RESULTS + results;

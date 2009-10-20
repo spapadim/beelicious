@@ -19,7 +19,6 @@
 package net.bitquill.delicious;
 
 import net.bitquill.delicious.api.Bookmark;
-import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -27,25 +26,26 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.IBinder;
-import android.os.Message;
 import android.telephony.TelephonyManager;
 import android.text.format.DateUtils;
-import android.widget.Toast;
+import android.util.Log;
 
 /**
- * Simple service for background tag cache sync. 
+ * Simple service for background tag cache refresh and background bookmark submission. 
  */
-public class SimpleSyncService extends Service {
+public class BookmarkService extends Service {
+    private static final String TAG = BookmarkService.class.getSimpleName();
     
     public static final String ACTION_SYNC_TAGS = "net.bitquill.delicious.intent.action.SYNC_TAGS";
     public static final String ACTION_SUBMIT_BOOKMARK = "net.bitquill.delicious.intent.action.SUBMIT_BOOKMARK";
     
+    public static final String EXTRA_FORCE_SYNC = "net.bitquill.delicious.intent.extra.FORCE_SYNC";
     public static final String EXTRA_BOOKMARK = "net.bitquill.delicious.intent.extra.BOOKMARK";
     public static final String EXTRA_SHARED = "net.bitquill.delicious.intent.extra.SHARED";
-    public static final String EXTRA_INTERVAL = "net.bitquill.delicious.intent.extra.INTERVAL";
     
     private NotificationManager mNotificationManager;
     private ConnectivityManager mConnectivityManager;
@@ -59,7 +59,7 @@ public class SimpleSyncService extends Service {
      */
     public static void syncCancel (Context context) {
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
-        Intent intent = new Intent(context, SimpleSyncService.class);
+        Intent intent = new Intent(context, BookmarkService.class);
         intent.setAction(ACTION_SYNC_TAGS);
         alarmManager.cancel(PendingIntent.getService(context, 0, intent, 0));
     }
@@ -72,7 +72,7 @@ public class SimpleSyncService extends Service {
     public static void syncSchedule (Context context, long interval) {
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
         long firstWake = System.currentTimeMillis() + interval;
-        Intent intent = new Intent(context, SimpleSyncService.class);
+        Intent intent = new Intent(context, BookmarkService.class);
         intent.setAction(ACTION_SYNC_TAGS);
         alarmManager.setInexactRepeating(AlarmManager.RTC, 
                 firstWake, interval, 
@@ -80,12 +80,31 @@ public class SimpleSyncService extends Service {
     }
     
     /**
-     * Initiate a tag sync in the background.
+     * Register or cancel alarm for periodic tag sync, depending on preference value.
      * @param context
      */
-    public static void actionSyncTags (Context context) {
-        Intent intent = new Intent(context, SimpleSyncService.class);
-        intent.setAction(SimpleSyncService.ACTION_SYNC_TAGS);
+    public static void syncUpdate (Context context) {
+        SharedPreferences settings = 
+            context.getSharedPreferences(DeliciousApp.PREFS_NAME, MODE_PRIVATE);
+        int intervalInHours = Integer.parseInt(settings.getString(SettingsActivity.PREF_TAG_BG_SYNC, "24"));
+        if (intervalInHours > 0) {
+            syncSchedule(context, DateUtils.HOUR_IN_MILLIS * intervalInHours);
+        } else {
+            syncCancel(context);
+        }
+    }
+    
+    /**
+     * Initiate a tag sync in the background.
+     * @param context
+     * @param force Set to true if sync desired even on 2G networks.
+     */
+    public static void actionSyncTags (Context context, boolean force) {
+        Intent intent = new Intent(context, BookmarkService.class);
+        intent.setAction(BookmarkService.ACTION_SYNC_TAGS);
+        if (force) {
+            intent.putExtra(EXTRA_FORCE_SYNC, true);
+        }
         context.startService(intent);
     }
     
@@ -96,10 +115,10 @@ public class SimpleSyncService extends Service {
      * @param shared
      */
     public static void actionSubmitBookmark (Context context, Bookmark bookmark, boolean shared) {
-        Intent intent = new Intent(context, SimpleSyncService.class);
-        intent.setAction(SimpleSyncService.ACTION_SUBMIT_BOOKMARK);
-        intent.putExtra(SimpleSyncService.EXTRA_BOOKMARK, bookmark);
-        intent.putExtra(SimpleSyncService.EXTRA_SHARED, shared);
+        Intent intent = new Intent(context, BookmarkService.class);
+        intent.setAction(BookmarkService.ACTION_SUBMIT_BOOKMARK);
+        intent.putExtra(BookmarkService.EXTRA_BOOKMARK, bookmark);
+        intent.putExtra(BookmarkService.EXTRA_SHARED, shared);
         context.startService(intent);
     }
 		
@@ -123,26 +142,16 @@ public class SimpleSyncService extends Service {
 		super.onStart(intent, startId);
 		String action = intent.getAction();
 		if (ACTION_SYNC_TAGS.equals(action)) {
-		    syncTags();
+		    boolean forceSync = intent.hasExtra(EXTRA_FORCE_SYNC) && 
+		        intent.getBooleanExtra(EXTRA_FORCE_SYNC, false);
+		    syncTags(!forceSync);
 		} else if (ACTION_SUBMIT_BOOKMARK.equals(action)) {
 		    Bookmark bookmark = intent.getParcelableExtra(EXTRA_BOOKMARK);
 		    boolean shared = intent.getBooleanExtra(EXTRA_SHARED, true);
 		    submitBookmark(bookmark, shared);
 		}
 	}
-	
-	private void showNotification (int resId, CharSequence title, CharSequence text, PendingIntent intent, int flags) {
-	    Notification notification = new Notification(resId, null, System.currentTimeMillis());
-	    notification.setLatestEventInfo(this, title, text, intent);
-	    notification.flags |= flags;
-	    mNotificationManager.notify(resId, notification);
-	}
-	
-	private void clearNotification (int resId) {
-	    mNotificationManager.cancel(resId);
-	    
-	}
-	
+
 	/**
 	 * Determine whether the network conditions and settings are suitable
 	 * for an update; based on the "Coding for Life" presentation
@@ -163,10 +172,15 @@ public class SimpleSyncService extends Service {
 	            && mTelephonyManager.isNetworkRoaming()) {
 	        return false;
 	    }
+	    
+	    // Read user setting
+	    SharedPreferences settings = getSharedPreferences(DeliciousApp.PREFS_NAME, 
+	            Context.MODE_PRIVATE);
+	    boolean syncOn2G = settings.getBoolean(SettingsActivity.PREF_SYNC_ON_2G, false);
 
 	    // Check if connection speed is appropriate
         int netSubtype = info.getSubtype();
-	    if (!requireHighSpeed) {
+	    if (syncOn2G || !requireHighSpeed) {
 	        return info.isConnected();
 	    } else if (netType == ConnectivityManager.TYPE_WIFI) {
 	        return info.isConnected();
@@ -182,15 +196,16 @@ public class SimpleSyncService extends Service {
 	/**
 	 * Start sync in background, if possible and appropriate.
 	 */
-	private void syncTags () {
+	private void syncTags (boolean requireHighSpeed) {
+	    Log.d(TAG, "syncTags()");
 	    if (mSyncActive) {
 	        return;
 	    }
-	    
+	    Log.d(TAG, "Sync not active");
 		final DeliciousApp app = DeliciousApp.getInstance();
 		
 		// If not possible or not appropriate, don't sync
-		if (!app.mDeliciousClient.hasCredentials() || !canSync(true)) {
+		if (!app.mDeliciousClient.hasCredentials() || !canSync(requireHighSpeed)) {
 			return;
 		}
 
@@ -199,14 +214,17 @@ public class SimpleSyncService extends Service {
 			public void run () {
 				TagsCache.syncTags(app);
 				mSyncActive = false;
-				clearNotification(R.drawable.stat_notify_sync); // XXX check
+				mNotificationManager.cancel(R.drawable.stat_notify_sync);
 			}
 		};
-		showNotification(R.drawable.stat_notify_sync, 
-		        getText(R.string.notify_sync_title), 
-		        getText(R.string.notify_sync_text), 
-		        makeTagListPendingIntent(),
-		        Notification.FLAG_NO_CLEAR | Notification.FLAG_ONGOING_EVENT);
+
+		Notification notification = new Notification(R.drawable.stat_notify_sync, null, System.currentTimeMillis());
+		notification.setLatestEventInfo(this, 
+		        getText(R.string.notify_sync_title), getText(R.string.notify_sync_text), 
+		        makeTagListPendingIntent());
+		notification.flags |= Notification.FLAG_NO_CLEAR | Notification.FLAG_ONGOING_EVENT;
+		mNotificationManager.notify(R.drawable.stat_notify_sync, notification);  // Use drawable ID as unique notification ID
+
 		mSyncActive = true;
 		syncThread.start();
 	}
@@ -214,6 +232,7 @@ public class SimpleSyncService extends Service {
 	private void submitBookmark(final Bookmark bookmark, final boolean shared) {
 	    final DeliciousApp app = DeliciousApp.getInstance();
 	    if (!app.mDeliciousClient.hasCredentials()) {
+	        // FIXME popup error notification instead; although this should not happen??
 	        return;
 	    }
 
@@ -221,31 +240,35 @@ public class SimpleSyncService extends Service {
             @Override
             public void run () {
                 boolean success = app.mDeliciousClient.addBookmark(bookmark, true, shared);
-                clearNotification(R.drawable.stat_notify_submit);
+                mNotificationManager.cancel(R.drawable.stat_notify_submit);
                 if (!success) {
-                    showNotification(R.drawable.stat_notify_error, 
-                            getText(R.string.notify_error_title), 
-                            getText(R.string.notify_error_text), 
-                            makeBookmarkPendingIntent(bookmark, shared),
-                            Notification.FLAG_AUTO_CANCEL);
+                    Notification notification = new Notification(R.drawable.stat_notify_error, null, System.currentTimeMillis());
+                    notification.setLatestEventInfo(BookmarkService.this, 
+                            getText(R.string.notify_error_title), getText(R.string.notify_error_text), 
+                            makeBookmarkPendingIntent(bookmark, shared, PendingIntent.FLAG_ONE_SHOT));
+                    notification.flags |= Notification.FLAG_AUTO_CANCEL;
+                    mNotificationManager.notify(R.drawable.stat_notify_error, notification); // FIXME notification id
                 }
             }
         };
+
+        Notification notification = new Notification(R.drawable.stat_notify_submit, null, System.currentTimeMillis());
+        notification.setLatestEventInfo(this, 
+                getText(R.string.notify_submit_title), getText(R.string.notify_submit_text),
+                makeBookmarkPendingIntent(bookmark, shared, PendingIntent.FLAG_UPDATE_CURRENT));
+        notification.flags |= Notification.FLAG_NO_CLEAR | Notification.FLAG_ONGOING_EVENT;
+        mNotificationManager.notify(R.drawable.stat_notify_submit, notification);
+
         addBookmarkThread.start();
-        showNotification(R.drawable.stat_notify_submit, 
-                getText(R.string.notify_submit_title), 
-                getText(R.string.notify_submit_text), 
-                makeTagListPendingIntent(),
-                Notification.FLAG_NO_CLEAR | Notification.FLAG_ONGOING_EVENT);
 	}
 	
-	private PendingIntent makeBookmarkPendingIntent (Bookmark bookmark, boolean shared) {
+	private PendingIntent makeBookmarkPendingIntent (Bookmark bookmark, boolean shared, int flags) {
 	    Intent intent = new Intent(this, BookmarkActivity.class);
 	    intent.setAction(Intent.ACTION_INSERT);
 	    intent.putExtra(EXTRA_BOOKMARK, bookmark);
 	    intent.putExtra(EXTRA_SHARED, shared);
 	    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-	    return PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT); // XXX check flags
+	    return PendingIntent.getActivity(this, 0, intent, flags);
 	}
 	
 	private PendingIntent makeTagListPendingIntent () {

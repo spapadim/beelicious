@@ -4,26 +4,21 @@
 		<Preference android:key="delicious_login" android:title="@string/pref_delicious_login"
 			android:summary="@string/pref_delicious_login_summary" />
 	</PreferenceCategory>
-	<PreferenceCategory android:title="@string/pref_tags_title">
-		<CheckBoxPreference android:title="@string/pref_suggest_enable"
-			android:summary="@string/pref_suggest_enable_summary" 
-			android:key="suggest_enable"
-			android:disableDependentsState="false" />
-	    <CheckBoxPreference android:title="@string/pref_suggest_bg_sync"
-	        android:summary="@string/pref_suggest_bg_sync_summary"
-	        android:key="suggest_bg_sync" 
-	        android:dependency="suggest_enable" />
-		<Preference android:title="@string/pref_suggest_sync"
-			android:key="suggest_sync" android:summary="@string/pref_suggest_sync_summary"
-			android:dependency="suggest_enable" />
-	<CheckBoxPreference android:summaryOn="@string/pref_cloud_logarithmic_summary_enabled" 
-	        android:summaryOff="@string/pref_cloud_logarithmic_summary_disabled" 
-	        android:dependency="suggest_enable" 
-	        android:defaultValue="true" 
-	        android:key="cloud_logarithmic" 
-	        android:title="@string/pref_cloud_logarithmic" 
-	        android:summary="@string/pref_cloud_logarithmic_summary_enabled" />
-</PreferenceCategory>
+	<PreferenceCategory android:title="@string/pref_sync_title">
+	    <ListPreference android:title="@string/pref_tag_bg_sync"
+	        android:summary="@string/pref_tag_bg_sync_summary"
+	        android:key="tag_bg_sync" 
+	        android:entryValues="@array/pref_tag_bg_sync_values" 
+	        android:entries="@array/pref_tag_bg_sync_entries"
+	        android:defaultValue="@string/pref_tag_bg_sync_default_value" />
+	    <CheckBoxPreference android:title="@string/pref_sync_on_2g"
+	        android:key="sync_on_2g" android:summary="@string/pref_sync_on_2g_summary"
+	        android:summaryOn="@string/pref_sync_on_2g_summary_on"
+	        android:summaryOff="@string/pref_sync_on_2g_summary_off"
+	        android:defaultValue="false" />
+		<Preference android:title="@string/pref_tag_sync"
+			android:key="tag_sync" android:summary="@string/pref_tag_sync_summary" />
+    </PreferenceCategory>
 	<PreferenceCategory android:title="@string/pref_defaults_title">
 		<CheckBoxPreference android:key="android_tag_enable"
 			android:summary="@string/pref_android_tag_enable_summary"
@@ -35,5 +30,11 @@
 		<CheckBoxPreference android:key="delicious_private"
 			android:summary="@string/pref_delicious_private_summary"
 			android:title="@string/pref_delicious_private" />
+        <CheckBoxPreference android:summaryOn="@string/pref_cloud_logarithmic_summary_enabled" 
+            android:summaryOff="@string/pref_cloud_logarithmic_summary_disabled" 
+            android:defaultValue="true" 
+            android:key="cloud_logarithmic" 
+            android:title="@string/pref_cloud_logarithmic" 
+            android:summary="@string/pref_cloud_logarithmic_summary_enabled" />
 	</PreferenceCategory>
 </PreferenceScreen>
