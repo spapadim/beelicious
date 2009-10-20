@@ -29,24 +29,32 @@ import android.os.Bundle;
 import android.os.Message;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.Toast;
+import android.widget.AdapterView.OnItemSelectedListener;
 
 /**
  * Login screen activity.
  */
-public class LoginActivity extends Activity {
+public class LoginActivity extends Activity implements OnItemSelectedListener {
 
 	private EditText mUsernameEdit;
 	private EditText mPasswordEdit;
-		
+	private Spinner mEndpointSpinner;
+	private EditText mEndpointEdit;
+
+	private String[] mEndpointValues;
+
 	private SharedPreferences mSettings;
 	private DeliciousClient mDeliciousClient;
 	
 	// Saved username and password when this dialog was called
 	private String mSavedUsername;
 	private String mSavedPassword;
+	private String mSavedEndpoint;
 
 	public static void actionLogin (Activity activity, int requestCode) {
 		Intent i = new Intent(activity, LoginActivity.class);
@@ -64,6 +72,8 @@ public class LoginActivity extends Activity {
 	public void onCreate (Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.login);
+
+		mEndpointValues = getResources().getStringArray(R.array.pref_endpoint_values);
 		
 		sValidateResultHandler.setActivity(this);
 
@@ -72,18 +82,26 @@ public class LoginActivity extends Activity {
 		if (savedInstanceState != null) {
 			mSavedUsername = savedInstanceState.getString(SAVED_USERNAME);
 			mSavedPassword = savedInstanceState.getString(SAVED_PASSWORD);
+			mSavedEndpoint = savedInstanceState.getString(SAVED_ENDPOINT);
 		} else {
-			mSavedUsername = mSettings.getString("delicious_username", null);
-			mSavedPassword = mSettings.getString("delicious_password", null);
+			mSavedUsername = mSettings.getString(SettingsActivity.PREF_USERNAME, null);
+			mSavedPassword = mSettings.getString(SettingsActivity.PREF_PASSWORD, null);
+			mSavedEndpoint = mSettings.getString(SettingsActivity.PREF_ENDPOINT, DeliciousClient.API_ENDPOINT_DEFAULT);
 		}
 	
 		mUsernameEdit = (EditText)findViewById(R.id.usernameEdit);
 		mPasswordEdit = (EditText)findViewById(R.id.passwordEdit);
+		mEndpointSpinner = (Spinner)findViewById(R.id.endpointSpinner);
+        mEndpointSpinner.setOnItemSelectedListener(this);
+		mEndpointEdit = (EditText)findViewById(R.id.endpointEdit);
 		if (mSavedUsername != null) {
 			mUsernameEdit.setText(mSavedUsername);
 		}
 		if (mSavedPassword != null) {
 			mPasswordEdit.setText(mSavedPassword);
+		}
+		if (mSavedEndpoint != null) {
+		    updateEndpointByValue(mSavedEndpoint);
 		}
 		
 		Button okButton = (Button)findViewById(R.id.okButton);
@@ -91,13 +109,43 @@ public class LoginActivity extends Activity {
 		Button cancelButton = (Button)findViewById(R.id.cancelButton);
 		cancelButton.setOnClickListener(mOnClickCancel);
 	}
+	
+	private void updateEndpointByValue (String value) {
+        mEndpointEdit.setText(value);
+	    String[] endpointValues = mEndpointValues;
+	    int position;
+	    for (position = 0;  position < endpointValues.length;  position++) {
+	        if (value.equals(mEndpointValues[position])) {
+	            break;
+	        }
+	    }
+	    if (position < endpointValues.length) {
+	        mEndpointSpinner.setSelection(position);
+	    } else {
+	        mEndpointSpinner.setSelection(position - 1);
+	        mEndpointEdit.setVisibility(View.GONE);
+	    }
+	}
+	
+	private void updateEndpointByPosition (int position) {
+	    String presetValue = mEndpointValues[position];
+	    if (presetValue.length() > 0) {
+	        mEndpointEdit.setVisibility(View.GONE);
+	    } else {
+	        mEndpointEdit.setVisibility(View.VISIBLE);
+	    }
+        mEndpointEdit.setText(presetValue);
+        mEndpointSpinner.setSelection(position);
+	}
 
 	private final OnClickListener mOnClickOk = new OnClickListener() {
 		@Override
 		public void onClick(View v) {
-			// Temporarily set new credentials on Delicious client
+			// Temporarily set new endpoint and credentials on Delicious client
 			String username = mUsernameEdit.getText().toString();
 			String password = mPasswordEdit.getText().toString();
+			String endpoint = mEndpointEdit.getText().toString();
+			mDeliciousClient.setApiEndpoint(endpoint);
 			mDeliciousClient.setCredentials(username, password);
 			
 			showDialog(ID_PROGRESS_DIALOG);
@@ -128,8 +176,9 @@ public class LoginActivity extends Activity {
 				if (valid) {
 					// Save new credentials in shared preferences
 					Editor editor = activity.mSettings.edit();
-					editor.putString("delicious_username", deliciousClient.getUsername());
-					editor.putString("delicious_password", deliciousClient.getPassword());
+					editor.putString(SettingsActivity.PREF_USERNAME, deliciousClient.getUsername());
+					editor.putString(SettingsActivity.PREF_PASSWORD, deliciousClient.getPassword());
+					editor.putString(SettingsActivity.PREF_ENDPOINT, deliciousClient.getApiEndpoint());
 					editor.commit();
 					// Notify user that the change was made
 					//Toast.makeText(LoginScreen.this, R.string.msg_credentials_valid, Toast.LENGTH_SHORT)
@@ -138,8 +187,9 @@ public class LoginActivity extends Activity {
 					activity.setResult(Activity.RESULT_OK);
 					activity.finish();
 				} else {
-					// Restore old credentials; change should be made permanent only when user enters valid credentials
-					deliciousClient.setCredentials(activity.mSavedUsername, activity.mSavedPassword);
+					// Restore old endpoint and credentials; change should be made permanent only when user enters valid credentials
+					deliciousClient.setApiEndpoint(activity.mSavedEndpoint);
+				    deliciousClient.setCredentials(activity.mSavedUsername, activity.mSavedPassword);
 					// Notify user that credentials were invalid
 					Toast.makeText(activity, R.string.msg_credentials_invalid, Toast.LENGTH_LONG)
 						 .show();
@@ -153,12 +203,14 @@ public class LoginActivity extends Activity {
 	
 	private static final String SAVED_USERNAME = "saved_username";
 	private static final String SAVED_PASSWORD = "saved_password";
+	private static final String SAVED_ENDPOINT = "saved_endpoint";
 	
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
 		outState.putString(SAVED_PASSWORD, mSavedPassword);
 		outState.putString(SAVED_USERNAME, mSavedUsername);
+		outState.putString(SAVED_ENDPOINT, mSavedEndpoint);
 	}
 
 	private static final int ID_PROGRESS_DIALOG = 1;
@@ -192,5 +244,16 @@ public class LoginActivity extends Activity {
 			finish();
 		}
 	};
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, 
+            int position, long id) {
+        updateEndpointByPosition(position);
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+        // Do nothing; should not happen
+    }
 
 }

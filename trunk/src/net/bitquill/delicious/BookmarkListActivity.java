@@ -26,19 +26,21 @@ import android.app.ListActivity;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Message;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.AbsListView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 
 // FIXME - this code is f***ing crufty, jeezus!!
 public class BookmarkListActivity extends ListActivity implements ListView.OnScrollListener {
@@ -50,13 +52,13 @@ public class BookmarkListActivity extends ListActivity implements ListView.OnScr
 	private static final int MENU_ITEM_SEARCH = Menu.FIRST + 1;
     private static final int MENU_ITEM_SETTINGS = Menu.FIRST + 2;
     private static final int MENU_ITEM_TAGCLOUD = Menu.FIRST + 3;
+    private static final int MENU_ITEM_VIEW = Menu.FIRST + 4;
+    private static final int MENU_ITEM_EDIT = Menu.FIRST + 5;
 
     // Request codes
     private static final int REQ_LOGIN = 100;
     
     private String mQueryTag;
-    
-    private boolean mSuggestEnabled;
     
     private static final int SEARCH_RESULT_SIZE_INCREMENT = 20;
 
@@ -201,6 +203,8 @@ public class BookmarkListActivity extends ListActivity implements ListView.OnScr
 		getListView().addHeaderView(mHeaderText);
 		
 		getListView().setOnScrollListener(this);
+		
+		registerForContextMenu(getListView());
 
         // If this is the first time running, we need to prompt for login info
         if (!DeliciousApp.getInstance().mDeliciousClient.hasCredentials()) { 
@@ -250,6 +254,8 @@ public class BookmarkListActivity extends ListActivity implements ListView.OnScr
 				// If user hit cancel in login screen, we must also exit
 				finish();
 			} else {
+			    // Do initial tag fetch
+			    BookmarkService.actionSyncTags(this, true);
 				// Do deferred fetch of bookmark list
 				fetchBookmarks(0);
 			}
@@ -267,27 +273,13 @@ public class BookmarkListActivity extends ListActivity implements ListView.OnScr
 			.setIcon(android.R.drawable.ic_menu_search);
 		menu.add(0, MENU_ITEM_TAGCLOUD, 0, R.string.menu_tagcloud)
 			.setShortcut('9', 'c') // TODO
-			.setIcon(R.drawable.ic_menu_cloud)
-			.setVisible(mSuggestEnabled);			
+			.setIcon(R.drawable.ic_menu_cloud);	
 		menu.add(0, MENU_ITEM_SETTINGS, 0, R.string.menu_settings)
 			.setShortcut('1', 's')
 			.setIcon(android.R.drawable.ic_menu_preferences);
 		return true;
 	}
 	
-	@Override
-	protected void onResume() {
-		super.onResume();
-        SharedPreferences settings = getSharedPreferences(DeliciousApp.PREFS_NAME, MODE_PRIVATE);
-		mSuggestEnabled = settings.getBoolean("suggest_enable", false);
-	}
-
-	@Override
-	public boolean onPrepareOptionsMenu (Menu menu) {
-		menu.findItem(MENU_ITEM_TAGCLOUD).setVisible(mSuggestEnabled);
-		return true;
-	}
-
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -303,20 +295,50 @@ public class BookmarkListActivity extends ListActivity implements ListView.OnScr
         case MENU_ITEM_SETTINGS:
         	startActivity(new Intent(this, SettingsActivity.class));
             return true;
+        default:
+            return super.onOptionsItemSelected(item);
         }
-		return super.onOptionsItemSelected(item);
+	}
+
+	private void viewUrl (String url) {
+        Intent i = new Intent();
+        i.setAction(Intent.ACTION_VIEW);
+        i.setData(Uri.parse(url));
+        startActivity(i);	    
+	}
+	
+	@Override
+	protected void onListItemClick(ListView l, View v, int position, long id) {
+		Bookmark bm = (Bookmark) l.getItemAtPosition(position);
+		viewUrl(bm.getUrl());
 	}
 
 	@Override
-	protected void onListItemClick(ListView l, View v, int position, long id) {
-		Bookmark bm = (Bookmark) getListView().getItemAtPosition(position);
-		Intent i = new Intent();
-		i.setAction(Intent.ACTION_VIEW);
-		i.setData(Uri.parse(bm.getUrl()));
-		startActivity(i);
-	}
+    public boolean onContextItemSelected(MenuItem item) {
+	    AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
+	    ListView l = (ListView)info.targetView;
+	    Bookmark bm = (Bookmark) l.getItemAtPosition(info.position);
+	    switch (item.getItemId()) {
+	    case MENU_ITEM_VIEW:
+	        viewUrl(bm.getUrl());
+	        return true;
+	    case MENU_ITEM_EDIT:
+	        BookmarkActivity.actionEditBookmark(this, bm);
+	        return true;
+	    default:
+	        return super.onContextItemSelected(item);
+	    }
+    }
 
-	private boolean mFetchPending = false;
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v,
+            ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        menu.add(0, MENU_ITEM_VIEW, 0, R.string.menu_view);
+        menu.add(0, MENU_ITEM_EDIT, 0, R.string.menu_edit);
+    }
+
+    private boolean mFetchPending = false;
 	
 	@Override
 	public void onScroll(AbsListView view, int firstVisibleItem,

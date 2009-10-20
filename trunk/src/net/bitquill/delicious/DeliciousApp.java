@@ -54,9 +54,11 @@ public final class DeliciousApp extends Application {
 		// Check for valid login credentials
 		SharedPreferences settings = 
 			getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-		String username = settings.getString("delicious_username", null);
-		String password = settings.getString("delicious_password", null);
+		String username = settings.getString(SettingsActivity.PREF_USERNAME, null);
+		String password = settings.getString(SettingsActivity.PREF_PASSWORD, null);
+		String endpoint = settings.getString(SettingsActivity.PREF_ENDPOINT, DeliciousClient.API_ENDPOINT_DEFAULT);
 
+		mDeliciousClient.setApiEndpoint(endpoint);
 		// Set credentials on client; if null, client will ignore
 		mDeliciousClient.setCredentials(username, password);
 	}

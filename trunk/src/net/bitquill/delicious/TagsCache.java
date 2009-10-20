@@ -25,6 +25,7 @@ import java.util.Map;
 import net.bitquill.delicious.api.Bookmark;
 import net.bitquill.delicious.api.DeliciousClient;
 
+import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -32,6 +33,8 @@ import android.content.SharedPreferences.Editor;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.widget.FilterQueryProvider;
+import android.widget.SimpleCursorAdapter;
 import android.widget.Toast;
 
 /**
@@ -137,5 +140,37 @@ public final class TagsCache {
 			return db.query("tags", new String[] {"_id", "tag", "count"}, 
 					null, null, null, null, "count DESC");
 		}
+	}
+	
+	/**
+	 * Return filterable cursor adapter for list of tags in local cache.
+	 * @param context
+	 * @param filterStr
+	 * @return
+	 */
+	public static final SimpleCursorAdapter getCursorAdapter (final Activity activity, 
+	        CharSequence filterStr, final boolean managed) {
+	    Cursor tagsCursor = TagsCache.getCursor(activity, filterStr);
+	    if (managed) {
+	        activity.startManagingCursor(tagsCursor);
+	    }
+	    SimpleCursorAdapter tagsAdapter = new SimpleCursorAdapter(activity, 
+	            android.R.layout.simple_dropdown_item_1line, 
+	            tagsCursor, 
+	            new String[]{"tag"}, 
+	            new int[] {android.R.id.text1});
+	    tagsAdapter.setFilterQueryProvider(new FilterQueryProvider() {
+	        @Override
+	        public Cursor runQuery(CharSequence constraint) {
+	            Cursor c = TagsCache.getCursor(activity, constraint);
+	            if (managed) {
+	                activity.startManagingCursor(c);
+	            }
+	            return c;
+	        }
+	        
+	    });
+	    tagsAdapter.setStringConversionColumn(tagsCursor.getColumnIndex("tag"));
+	    return tagsAdapter;
 	}
 }

@@ -20,14 +20,8 @@ package net.bitquill.delicious;
 
 import java.util.Date;
 
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.app.ProgressDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Message;
-import android.preference.CheckBoxPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.text.format.DateUtils;
@@ -35,64 +29,58 @@ import android.text.format.DateUtils;
 public class SettingsActivity extends PreferenceActivity 
 	implements Preference.OnPreferenceChangeListener, Preference.OnPreferenceClickListener {
 		
-	private boolean mNeverSynced = true;
-	
-	@Override
-	public void onDestroy () {
-	    // XXX do first tag sync here?
-	    super.onDestroy();
-	}
-	
+    // Preference keys from delicious_settings.xml
+    public static final String PREF_LOGIN = "delicious_login";
+    public static final String PREF_USERNAME = "delicious_username";
+    public static final String PREF_PASSWORD = "delicious_password";
+    public static final String PREF_ENDPOINT = "delicious_endpoint";
+    public static final String PREF_TAG_BG_SYNC = "tag_bg_sync";
+    public static final String PREF_SYNC_ON_2G = "sync_on_2g";
+    public static final String PREF_TAG_SYNC = "tag_sync";
+    public static final String PREF_CLOUD_LOGARITHMIC = "cloud_logarithmic";
+    public static final String PREF_ANDROID_TAG_ENABLE = "android_tag_enable";
+    public static final String PREF_ANDROID_TAG_NAME = "android_tag_name";
+    public static final String PREF_DELICIOUS_PRIVATE = "delicious_private";
+    
 	@Override
 	protected void onCreate (Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 				
 		getPreferenceManager().setSharedPreferencesName(DeliciousApp.PREFS_NAME);
 		
-		Date lastSyncDate = TagsCache.getLastSyncDate(this);
-		mNeverSynced = (lastSyncDate == null);
-
 		// Load XML preferences file
 		addPreferencesFromResource(R.xml.delicious_settings);
 		
-		Preference p = findPreference("delicious_login");
+		Preference p = findPreference(PREF_LOGIN);
 		p.setOnPreferenceClickListener(this);
 		
-		p = findPreference("android_tag_name");
+		p = findPreference(PREF_ANDROID_TAG_NAME);
 		p.setOnPreferenceChangeListener(this);
 		p.setSummary(getPreferenceScreen().getSharedPreferences()
-				.getString("android_tag_name", 
+				.getString(PREF_ANDROID_TAG_NAME, 
 						getText(R.string.pref_android_tag_name_default).toString()));
-		p = findPreference("suggest_enable");
-		p.setOnPreferenceChangeListener(this);
-		p = findPreference("suggest_sync");
+		p = findPreference(PREF_TAG_SYNC);
 		p.setOnPreferenceClickListener(this);
+        Date lastSyncDate = TagsCache.getLastSyncDate(this);
 		if (lastSyncDate != null) {
-		    p.setSummary(getText(R.string.pref_suggest_sync_summary_prefix).toString() + 
+		    p.setSummary(getText(R.string.pref_tag_sync_summary_prefix).toString() + " " +
 		            DateUtils.getRelativeTimeSpanString(lastSyncDate.getTime()));
 		}
-		p = findPreference("suggest_bg_sync");
+		p = findPreference(PREF_TAG_BG_SYNC);
 		p.setOnPreferenceClickListener(this);
 	}
 	
 	@Override
 	public boolean onPreferenceChange(Preference preference, Object newValue) {
-		if ("android_tag_name".equals(preference.getKey())) {
+		if (PREF_ANDROID_TAG_NAME.equals(preference.getKey())) {
 			preference.setSummary((String)newValue);
 			return true;
-		} else if ("suggest_enable".equals(preference.getKey())) {
-			boolean enabled = ((Boolean)newValue).booleanValue();
-			if (enabled && mNeverSynced) {
-			    mNeverSynced = false; // FIXME if on EDGE, sync won't happen
-				SimpleSyncService.actionSyncTags(this);
-			}
-			return true;
-		} else if ("suggest_bg_sync".equals(preference.getKey())) {
-		    boolean enabled = ((Boolean)newValue).booleanValue();
-		    if (enabled) {
-		        SimpleSyncService.syncSchedule(this, DateUtils.MINUTE_IN_MILLIS * 60); // TODO - make interval a setting
+		} else if (PREF_TAG_BG_SYNC.equals(preference.getKey())) {
+		    int intervalInHours = Integer.parseInt((String)newValue);
+		    if (intervalInHours > 0) {
+		        BookmarkService.syncSchedule(this, DateUtils.HOUR_IN_MILLIS * intervalInHours);
 		    } else {
-		        SimpleSyncService.syncCancel(this);
+		        BookmarkService.syncCancel(this);
 		    }
 		    return true;
 		}
@@ -101,12 +89,12 @@ public class SettingsActivity extends PreferenceActivity
 	
 	@Override
 	public boolean onPreferenceClick(Preference preference) {
-		if ("delicious_login".equals(preference.getKey())) {
+		if (PREF_LOGIN.equals(preference.getKey())) {
 			Intent i = new Intent(this, LoginActivity.class);
 			startActivity(i);
 			return true;
-		} else if ("suggest_sync".equals(preference.getKey())) {
-			SimpleSyncService.actionSyncTags(this);
+		} else if (PREF_TAG_SYNC.equals(preference.getKey())) {
+			BookmarkService.actionSyncTags(this, true);
 		}
 		return false;
 	}

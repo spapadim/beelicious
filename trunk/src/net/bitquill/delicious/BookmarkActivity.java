@@ -27,23 +27,24 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Message;
 import android.provider.Browser;
 import android.text.Editable;
+import android.text.SpannableString;
 import android.text.TextWatcher;
+import android.text.style.URLSpan;
+import android.text.util.Linkify;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.FilterQueryProvider;
 import android.widget.MultiAutoCompleteTextView;
-import android.widget.SimpleCursorAdapter;
 import android.widget.Toast;
 
 /**
@@ -65,13 +66,25 @@ public class BookmarkActivity extends Activity {
 	private CheckBox mPrivateCheck;
 		
 	private ArrayList<String> mTagSuggestions;
+	
+	public static void actionEditBookmark (Context context, Bookmark bookmark) {
+	    Intent i = new Intent(context, BookmarkActivity.class);
+	    i.setAction(Intent.ACTION_INSERT);
+	    i.putExtra(BookmarkService.EXTRA_BOOKMARK, bookmark);
+	    context.startActivity(i);
+	}
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
-		if (requestCode == REQ_LOGIN && resultCode == Activity.RESULT_CANCELED) {
-			// If user hit cancel in login screen, we must also exit
-			finish();
+		if (requestCode == REQ_LOGIN) {
+		    if (resultCode == Activity.RESULT_CANCELED) {
+		        // If user hit cancel in login screen, we must also exit
+		        finish();
+		    } else {
+		        // Do initial tag fetch
+		        BookmarkService.actionSyncTags(this, true);
+		    }
 		}
 	}
 	
@@ -137,27 +150,7 @@ public class BookmarkActivity extends Activity {
         mPrivateCheck = (CheckBox)findViewById(R.id.privateCheck);
 
         mTagsEdit.setTokenizer(new SpaceTokenizer());
-        boolean autocomplete = settings.getBoolean("suggest_enable", false);
-        if (autocomplete) {
-        	Cursor tagsCursor = TagsCache.getCursor(this, null);
-        	//startManagingCursor(tagsCursor);
-        	SimpleCursorAdapter tagsAdapter = new SimpleCursorAdapter(this, 
-        			android.R.layout.simple_dropdown_item_1line, 
-        			tagsCursor, 
-        			new String[]{"tag"}, 
-        			new int[] {android.R.id.text1});
-        	tagsAdapter.setFilterQueryProvider(new FilterQueryProvider() {
-        		@Override
-        		public Cursor runQuery(CharSequence constraint) {
-        			Cursor c = TagsCache.getCursor(BookmarkActivity.this, constraint);
-        			//startManagingCursor(c);
-        			return c;
-        		}
-        	
-        	});
-        	tagsAdapter.setStringConversionColumn(tagsCursor.getColumnIndex("tag"));
-        	mTagsEdit.setAdapter(tagsAdapter);
-        }
+    	mTagsEdit.setAdapter(TagsCache.getCursorAdapter(this, null, false));
 
         // Add a text change listener to invalidate tag suggestions if URL field changes
         mUrlEdit.addTextChangedListener(new TextWatcher() {
@@ -205,8 +198,8 @@ public class BookmarkActivity extends Activity {
         });
         
         // Prepend Android tag, if option is enabled in settings
-        if (settings.getBoolean("android_tag_enable", false)) {
-        	String androidTag = settings.getString("android_tag_name", null);
+        if (settings.getBoolean(SettingsActivity.PREF_ANDROID_TAG_ENABLE, false)) {
+        	String androidTag = settings.getString(SettingsActivity.PREF_ANDROID_TAG_NAME, null);
         	String tags = mTagsEdit.getText().toString();
         	if (androidTag != null && tags.indexOf(androidTag) < 0) { // FIXME - boundary case: tag that is a super-string of androidTag
         		if (tags.length() == 0) {
@@ -218,7 +211,7 @@ public class BookmarkActivity extends Activity {
         }
         
         // Set private checkbox according to settings
-        mPrivateCheck.setChecked(settings.getBoolean("delicious_private", false));
+        mPrivateCheck.setChecked(settings.getBoolean(SettingsActivity.PREF_DELICIOUS_PRIVATE, false));
         
         String url = null;
         String title = null;
@@ -227,15 +220,15 @@ public class BookmarkActivity extends Activity {
         String action = intent.getAction();
         if (Intent.ACTION_SEND.equals(action) &&
         		"text/plain".equals(intent.getType())) {
-        	url = intent.getExtras().getString(Intent.EXTRA_TEXT);
+        	url = extractUrl(intent.getStringExtra(Intent.EXTRA_TEXT));
         } else if (Intent.ACTION_INSERT.equals(action) && 
         		Browser.BOOKMARKS_URI.equals(intent.getData())) {
         	url = intent.getStringExtra("url");
             title = intent.getStringExtra("title");
         } else if (Intent.ACTION_INSERT.equals(action) &&
-                intent.hasExtra(SimpleSyncService.EXTRA_BOOKMARK)) {
-            Bookmark bm = intent.getParcelableExtra(SimpleSyncService.EXTRA_BOOKMARK);
-            boolean shared = intent.getBooleanExtra(SimpleSyncService.EXTRA_SHARED, true);
+                intent.hasExtra(BookmarkService.EXTRA_BOOKMARK)) {
+            Bookmark bm = intent.getParcelableExtra(BookmarkService.EXTRA_BOOKMARK);
+            boolean shared = intent.getBooleanExtra(BookmarkService.EXTRA_SHARED, true);
             url = bm.getUrl();
             title = bm.getDescription();
             mCommentsEdit.setText(bm.getExtended());
@@ -266,6 +259,17 @@ public class BookmarkActivity extends Activity {
         	}
         }
     }
+	
+	private String extractUrl (String text) {
+	    SpannableString s = new SpannableString(text);
+	    Linkify.addLinks(s, Linkify.WEB_URLS);
+	    URLSpan spans[] = s.getSpans(0, s.length(), URLSpan.class);
+	    if (spans.length > 0) {
+	        return spans[0].getURL();
+	    } else {
+	        return null;
+	    }
+	}
 	
 	private void fetchTitle (final String url) {
 		Thread fetchTitleThread = new Thread() {
@@ -447,7 +451,7 @@ public class BookmarkActivity extends Activity {
 
     	// Submit request in background to service
         Bookmark bookmark = new Bookmark(url, title, comments, tags);
-        SimpleSyncService.actionSubmitBookmark(this, bookmark, shared);
+        BookmarkService.actionSubmitBookmark(this, bookmark, shared);
     	
         // Terminate activity with success result code
         setResult(Activity.RESULT_OK);
