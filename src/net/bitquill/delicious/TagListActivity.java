@@ -4,22 +4,35 @@ import android.app.Activity;
 import android.app.ListActivity;
 import android.app.SearchManager;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
+import android.widget.SimpleCursorAdapter;
+import android.widget.TextView;
 
 public class TagListActivity extends ListActivity {
 
     private static final int REQ_LOGIN = 100;
+    
+    private SimpleCursorAdapter mCursorAdapter;
 
     @Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
 		setContentView(R.layout.tag_list);
-		setListAdapter(TagsCache.getCursorAdapter(this, null, true)); // XXX managed?
+		
+		TextView headerView = (TextView)getLayoutInflater()
+            .inflate(R.layout.tag_list_item, getListView(), false);
+		headerView.setText(R.string.tag_list_recent_entry);
+		headerView.setBackgroundColor(R.color.tag_list_recent_color);
+		getListView().addHeaderView(headerView, null, true);
+
+		mCursorAdapter = TagsCache.getCursorAdapter(this,
+		        R.layout.tag_list_item, null, true); // XXX managed?
+        setListAdapter(mCursorAdapter);
 		getListView().setTextFilterEnabled(true);
 		
         // We need to check valid login info, since this is an alternative entry app entry point
@@ -46,10 +59,12 @@ public class TagListActivity extends ListActivity {
 
     @Override
     protected void onListItemClick(ListView l, View v, int position, long id) {
-        String tag = (String)l.getItemAtPosition(position);
+        Cursor c = (Cursor)l.getItemAtPosition(position);
         Intent intent = new Intent(this, BookmarkListActivity.class);
-        intent.setAction(Intent.ACTION_SEARCH);
-        intent.putExtra(SearchManager.QUERY, tag);
+        if (c != null) {
+            intent.setAction(Intent.ACTION_VIEW);
+            intent.putExtra(BookmarkService.EXTRA_TAG, mCursorAdapter.convertToString(c));
+        }
         startActivity(intent);
     }
 

@@ -150,7 +150,8 @@ public class BookmarkActivity extends Activity {
         mPrivateCheck = (CheckBox)findViewById(R.id.privateCheck);
 
         mTagsEdit.setTokenizer(new SpaceTokenizer());
-    	mTagsEdit.setAdapter(TagsCache.getCursorAdapter(this, null, false));
+    	mTagsEdit.setAdapter(TagsCache.getCursorAdapter(this, 
+    	        android.R.layout.simple_dropdown_item_1line, null, false));
 
         // Add a text change listener to invalidate tag suggestions if URL field changes
         mUrlEdit.addTextChangedListener(new TextWatcher() {

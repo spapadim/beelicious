@@ -46,6 +46,7 @@ public class BookmarkService extends Service {
     public static final String EXTRA_FORCE_SYNC = "net.bitquill.delicious.intent.extra.FORCE_SYNC";
     public static final String EXTRA_BOOKMARK = "net.bitquill.delicious.intent.extra.BOOKMARK";
     public static final String EXTRA_SHARED = "net.bitquill.delicious.intent.extra.SHARED";
+    public static final String EXTRA_TAG = "net.bitquill.delicious.intent.extra.TAG";
     
     private NotificationManager mNotificationManager;
     private ConnectivityManager mConnectivityManager;
