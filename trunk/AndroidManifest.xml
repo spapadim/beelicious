@@ -28,17 +28,14 @@
 			android:launchMode="singleTop" android:name=".SettingsActivity">
 		</activity>
 
-		<activity android:name=".BookmarkListActivity">
-			<intent-filter android:icon="@drawable/icon"
-				android:label="@string/app_name">
-				<action android:name="android.intent.action.MAIN" />
-				<category android:name="android.intent.category.LAUNCHER" />
-			</intent-filter>
+		<activity android:name=".BookmarkListActivity"
+		    android:label="@string/bookmark_list_title">
+
 			<intent-filter>
 				<action android:name="android.intent.action.SEARCH" />
 				<category android:name="android.intent.category.DEFAULT" />
 			</intent-filter>
-			<meta-data android:resource="@xml/searchable" android:name="android.app.searchable"></meta-data>
+			<meta-data android:resource="@xml/searchable" android:name="android.app.searchable" />
 		</activity>
 
 		<activity android:label="@string/login_title"
@@ -48,8 +45,17 @@
 		<activity android:name=".CloudActivity" android:launchMode="singleTop"
 			android:label="@string/cloud_title" android:configChanges="keyboardHidden|orientation" />
 
-        <activity android:name=".TagListActivity" android:launchMode="singleTop"
-            android:label="@string/taglist_title" android:configChanges="keyboardHidden|orientation" />
+        <activity android:name=".TagListActivity" 
+            android:label="@string/tag_list_title" 
+            android:launchMode="singleTop"
+            android:configChanges="keyboardHidden|orientation">
+
+            <intent-filter android:icon="@drawable/icon"
+                android:label="@string/app_name">
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
 
         <receiver android:name=".BootReceiver">
             <intent-filter>

@@ -149,15 +149,15 @@ public final class TagsCache {
 	 * @return
 	 */
 	public static final SimpleCursorAdapter getCursorAdapter (final Activity activity, 
-	        CharSequence filterStr, final boolean managed) {
+	        int layout, CharSequence filterStr, final boolean managed) {
 	    Cursor tagsCursor = TagsCache.getCursor(activity, filterStr);
 	    if (managed) {
 	        activity.startManagingCursor(tagsCursor);
 	    }
 	    SimpleCursorAdapter tagsAdapter = new SimpleCursorAdapter(activity, 
-	            android.R.layout.simple_dropdown_item_1line, 
+	            layout, 
 	            tagsCursor, 
-	            new String[]{"tag"}, 
+	            new String[] {"tag"}, 
 	            new int[] {android.R.id.text1});
 	    tagsAdapter.setFilterQueryProvider(new FilterQueryProvider() {
 	        @Override

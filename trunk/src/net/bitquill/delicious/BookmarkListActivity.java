@@ -51,9 +51,8 @@ public class BookmarkListActivity extends ListActivity implements ListView.OnScr
 	private static final int MENU_ITEM_ADD = Menu.FIRST;
 	private static final int MENU_ITEM_SEARCH = Menu.FIRST + 1;
     private static final int MENU_ITEM_SETTINGS = Menu.FIRST + 2;
-    private static final int MENU_ITEM_TAGCLOUD = Menu.FIRST + 3;
-    private static final int MENU_ITEM_VIEW = Menu.FIRST + 4;
-    private static final int MENU_ITEM_EDIT = Menu.FIRST + 5;
+    private static final int MENU_ITEM_VIEW = Menu.FIRST + 3;
+    private static final int MENU_ITEM_EDIT = Menu.FIRST + 4;
 
     // Request codes
     private static final int REQ_LOGIN = 100;
@@ -132,7 +131,7 @@ public class BookmarkListActivity extends ListActivity implements ListView.OnScr
 	private void showLoadingFooter (boolean show) {
 		setProgressBarIndeterminateVisibility(show);
 		if (show) {
-			getListView().addFooterView(mFooterView);
+			getListView().addFooterView(mFooterView, null, false);
 		} else {
 			getListView().removeFooterView(mFooterView);
 		}
@@ -190,7 +189,9 @@ public class BookmarkListActivity extends ListActivity implements ListView.OnScr
 		} else {
 			mFetchPending = false;
 			mQueryTag = null;
-			if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+			if (Intent.ACTION_VIEW.equals(intent.getAction())) {
+			    mQueryTag = intent.getStringExtra(BookmarkService.EXTRA_TAG);
+			} else if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
 				mQueryTag = intent.getStringExtra(SearchManager.QUERY); 
 			}
 		}
@@ -200,7 +201,7 @@ public class BookmarkListActivity extends ListActivity implements ListView.OnScr
 				.inflate(R.layout.bookmark_list_header, getListView(), false);
 		mFooterView = getLayoutInflater()
 				.inflate(R.layout.bookmark_list_footer, getListView(), false);
-		getListView().addHeaderView(mHeaderText);
+		getListView().addHeaderView(mHeaderText, null, false);
 		
 		getListView().setOnScrollListener(this);
 		
@@ -271,9 +272,6 @@ public class BookmarkListActivity extends ListActivity implements ListView.OnScr
 		menu.add(0, MENU_ITEM_SEARCH, 0, R.string.menu_search)
 			.setShortcut('2', 'l') // TODO
 			.setIcon(android.R.drawable.ic_menu_search);
-		menu.add(0, MENU_ITEM_TAGCLOUD, 0, R.string.menu_tagcloud)
-			.setShortcut('9', 'c') // TODO
-			.setIcon(R.drawable.ic_menu_cloud);	
 		menu.add(0, MENU_ITEM_SETTINGS, 0, R.string.menu_settings)
 			.setShortcut('1', 's')
 			.setIcon(android.R.drawable.ic_menu_preferences);
@@ -288,9 +286,6 @@ public class BookmarkListActivity extends ListActivity implements ListView.OnScr
         	return true;
         case MENU_ITEM_SEARCH:
         	onSearchRequested();
-        	return true;
-        case MENU_ITEM_TAGCLOUD:
-        	startActivity(new Intent(this, CloudActivity.class));
         	return true;
         case MENU_ITEM_SETTINGS:
         	startActivity(new Intent(this, SettingsActivity.class));
@@ -316,8 +311,7 @@ public class BookmarkListActivity extends ListActivity implements ListView.OnScr
 	@Override
     public boolean onContextItemSelected(MenuItem item) {
 	    AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
-	    ListView l = (ListView)info.targetView;
-	    Bookmark bm = (Bookmark) l.getItemAtPosition(info.position);
+	    Bookmark bm = (Bookmark) getListView().getItemAtPosition(info.position);
 	    switch (item.getItemId()) {
 	    case MENU_ITEM_VIEW:
 	        viewUrl(bm.getUrl());
