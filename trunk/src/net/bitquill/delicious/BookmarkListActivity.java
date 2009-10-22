@@ -49,7 +49,7 @@ public class BookmarkListActivity extends ListActivity implements ListView.OnScr
 
     // Menu item IDs
 	private static final int MENU_ITEM_ADD = Menu.FIRST;
-	private static final int MENU_ITEM_SEARCH = Menu.FIRST + 1;
+	//private static final int MENU_ITEM_SEARCH = Menu.FIRST + 1;
     private static final int MENU_ITEM_SETTINGS = Menu.FIRST + 2;
     private static final int MENU_ITEM_VIEW = Menu.FIRST + 3;
     private static final int MENU_ITEM_EDIT = Menu.FIRST + 4;
@@ -269,9 +269,9 @@ public class BookmarkListActivity extends ListActivity implements ListView.OnScr
 		menu.add(0, MENU_ITEM_ADD, 0, R.string.menu_add)
 			.setShortcut('5', 'a')
 			.setIcon(android.R.drawable.ic_menu_add);
-		menu.add(0, MENU_ITEM_SEARCH, 0, R.string.menu_search)
-			.setShortcut('2', 'l') // TODO
-			.setIcon(android.R.drawable.ic_menu_search);
+		//menu.add(0, MENU_ITEM_SEARCH, 0, R.string.menu_search)
+		//	.setShortcut('2', 'l') // TODO
+		//	.setIcon(android.R.drawable.ic_menu_search);
 		menu.add(0, MENU_ITEM_SETTINGS, 0, R.string.menu_settings)
 			.setShortcut('1', 's')
 			.setIcon(android.R.drawable.ic_menu_preferences);
@@ -284,9 +284,9 @@ public class BookmarkListActivity extends ListActivity implements ListView.OnScr
         case MENU_ITEM_ADD:
         	startActivity(new Intent(this, BookmarkActivity.class));
         	return true;
-        case MENU_ITEM_SEARCH:
-        	onSearchRequested();
-        	return true;
+        //case MENU_ITEM_SEARCH:
+        //	onSearchRequested();
+        //	return true;
         case MENU_ITEM_SETTINGS:
         	startActivity(new Intent(this, SettingsActivity.class));
             return true;

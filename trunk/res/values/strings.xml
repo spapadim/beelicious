@@ -78,9 +78,9 @@
 	<string name="pref_tag_bg_sync_summary">Background sync interval</string>
 	<string name="tag_list_title">Beelicious - Tags</string>
 	<string name="bookmark_list_title">Beelicious - Bookmarks</string>
-	<string name="msg_tag_list_empty">No tags; was the first sync successfully completed?</string>
-	<string name="menu_tagcloud">Tag cloud</string>
-	<string name="cloud_title">Tag cloud</string>
+	<string name="msg_tag_list_empty">No tags; was the first sync\nsuccessfully completed?</string>
+	<string name="menu_tag_cloud">Tag cloud</string>
+	<string name="tag_cloud_title">Tag cloud</string>
 	<string name="pref_cloud_logarithmic">Logarithmic cloud</string>
 	<string name="pref_cloud_logarithmic_summary_enabled">Tag cloud with logarithmic font scaling</string>
 	<string name="pref_cloud_logarithmic_summary_disabled">Tag cloud with linear font scaling</string>

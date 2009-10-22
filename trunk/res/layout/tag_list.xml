@@ -6,5 +6,5 @@
         android:scrollbarStyle="outsideInset" />
     <TextView android:id="@android:id/empty"
         android:layout_width="fill_parent" android:layout_height="fill_parent"
-        android:text="@string/msg_tag_list_empty" />
+        android:text="@string/msg_tag_list_empty" android:gravity="center"/>
 </LinearLayout>

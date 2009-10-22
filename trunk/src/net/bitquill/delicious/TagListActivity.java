@@ -78,7 +78,7 @@ public class TagListActivity extends ListActivity {
         menu.add(0, MENU_ITEM_ADD, 0, R.string.menu_add)
             .setShortcut('5', 'a')
             .setIcon(android.R.drawable.ic_menu_add);
-        menu.add(0, MENU_ITEM_TAGCLOUD, 0, R.string.menu_tagcloud)
+        menu.add(0, MENU_ITEM_TAGCLOUD, 0, R.string.menu_tag_cloud)
             .setShortcut('9', 'c') // TODO
             .setIcon(R.drawable.ic_menu_cloud); 
         menu.add(0, MENU_ITEM_SETTINGS, 0, R.string.menu_settings)

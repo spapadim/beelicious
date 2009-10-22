@@ -35,7 +35,6 @@
 				<action android:name="android.intent.action.SEARCH" />
 				<category android:name="android.intent.category.DEFAULT" />
 			</intent-filter>
-			<meta-data android:resource="@xml/searchable" android:name="android.app.searchable" />
 		</activity>
 
 		<activity android:label="@string/login_title"
@@ -43,7 +42,7 @@
 			android:configChanges="keyboardHidden|orientation" />
 
 		<activity android:name=".CloudActivity" android:launchMode="singleTop"
-			android:label="@string/cloud_title" android:configChanges="keyboardHidden|orientation" />
+			android:label="@string/tag_cloud_title" android:configChanges="keyboardHidden|orientation" />
 
         <activity android:name=".TagListActivity" 
             android:label="@string/tag_list_title" 
@@ -55,6 +54,7 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            <meta-data android:resource="@xml/searchable" android:name="android.app.searchable" />
         </activity>
 
         <receiver android:name=".BootReceiver">

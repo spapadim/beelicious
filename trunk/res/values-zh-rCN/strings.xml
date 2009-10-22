@@ -83,8 +83,8 @@
 	<string name="pref_suggest_sync">同步标签</string>
 	<string name="pref_suggest_sync_summary">与Del.icio.us同步标签列表</string>
 	<string name="pref_suggest_sync_last">上次同步</string>
-	<string name="menu_tagcloud">标签云</string>
-	<string name="cloud_title">标签云</string>
+	<string name="menu_tag_cloud">标签云</string>
+	<string name="tag_cloud_title">标签云</string>
 	<string name="pref_cloud_logarithmic">对数云</string>
 	<string name="pref_cloud_logarithmic_summary_enabled">标签云使用对数字体缩放</string>
 	<string name="pref_cloud_logarithmic_summary_disabled">标签云使用线性字体缩放</string>

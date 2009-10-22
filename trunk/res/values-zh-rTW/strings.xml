@@ -83,8 +83,8 @@
 	<string name="pref_suggest_sync">同步選項卡</string>
 	<string name="pref_suggest_sync_summary">與Del.icio.us同步選項卡清單</string>
 	<string name="pref_suggest_sync_last">上次同步</string>
-	<string name="menu_tagcloud">選項卡云</string>
-	<string name="cloud_title">選項卡云</string>
+	<string name="menu_tag_cloud">選項卡云</string>
+	<string name="tag_cloud_title">選項卡云</string>
 	<string name="pref_cloud_logarithmic">對數云</string>
 	<string name="pref_cloud_logarithmic_summary_enabled">選項卡云使用對數字型縮放</string>
 	<string name="pref_cloud_logarithmic_summary_disabled">選項卡云使用線性字型縮放</string>
