@@ -242,7 +242,7 @@ public class BookmarkActivity extends Activity {
         if (url != null) {
         	mUrlEdit.setText(url);
         	mUrlEdit.setEnabled(false);
-        	mTagsEdit.requestFocus();
+        	//mTagsEdit.requestFocus(); // Will pop up soft keyboard
         	
         	// Start fetch threads only if it's a fresh activity
         	if (savedInstanceState == null) {
@@ -276,13 +276,15 @@ public class BookmarkActivity extends Activity {
 		Thread fetchTitleThread = new Thread() {
 			@Override
 			public void run () {
-				String title = mDeliciousClient.fetchHtmlTitle(url);
+				String title = null;
+				try {
+				    mDeliciousClient.fetchHtmlTitle(url);
+				} catch (Exception e) { }
 				if (title != null) {
 					title = title.replaceAll("\\s+", " "); // Remove duplicate whitespace
 				} else {
 					title = url;  // Failed to fetch title, use URL
 				}
-				// TODO - strip leading/trailing whitespace
 				Message msg = sResultHandler.obtainMessage(MSG_HTML_TITLE_SET, title);
 				sResultHandler.sendMessage(msg);
 			}
