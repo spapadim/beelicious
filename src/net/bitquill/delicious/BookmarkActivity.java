@@ -39,6 +39,7 @@ import android.text.SpannableString;
 import android.text.TextWatcher;
 import android.text.style.URLSpan;
 import android.text.util.Linkify;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -49,11 +50,11 @@ import android.widget.Toast;
 
 /**
  * Activity for entering bookmark information.
- * 
- * TODO - Support bookmark editing.
  */
 public class BookmarkActivity extends Activity {
 	
+    private static final String TAG = BookmarkActivity.class.getSimpleName();
+    
 	private static final int REQ_LOGIN = 100;
 	
 	private DeliciousClient mDeliciousClient;
@@ -278,8 +279,10 @@ public class BookmarkActivity extends Activity {
 			public void run () {
 				String title = null;
 				try {
-				    mDeliciousClient.fetchHtmlTitle(url);
-				} catch (Exception e) { }
+				    title = mDeliciousClient.fetchHtmlTitle(url);
+				} catch (Exception e) {
+				    Log.e(TAG, "fetchHtmlTitle failed", e);
+				}
 				if (title != null) {
 					title = title.replaceAll("\\s+", " "); // Remove duplicate whitespace
 				} else {
