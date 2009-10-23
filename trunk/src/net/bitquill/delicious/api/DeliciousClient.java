@@ -51,12 +51,15 @@ import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
 
+import android.util.Log;
+
 /**
  * Class that encapsulates Del.icio.us API calls.
  * See http://www.delicious.com/help/api for details.
  * Uses a thread-safe HTTP client connection manager.
  */
 public final class DeliciousClient {
+    private static final String TAG = DeliciousClient.class.getSimpleName();
 
     private String mApiEndpoint = API_ENDPOINT_DEFAULT;
 	private UsernamePasswordCredentials mCredentials;
@@ -179,7 +182,7 @@ public final class DeliciousClient {
 					eventType = parser.next();
 				}
 			} catch (Throwable t) {
-				android.util.Log.e(DeliciousApp.LOG_TAG, "XmlResponseParser exception", t);
+				Log.e(TAG, "XmlResponseParser exception", t);
 				setResult(null);
 		 	} finally {
 		 		try {
@@ -240,6 +243,7 @@ public final class DeliciousClient {
 			HttpResponse resp = mHttpClient.execute(get);
 			e = resp.getEntity();
 		} catch (Throwable t) {
+		    Log.d(TAG, "HTTP request failed", t);
 			return null;
 		}
 		
@@ -249,11 +253,12 @@ public final class DeliciousClient {
 					throws XmlPullParserException, IOException {
 				switch(eventType) {
 				case XmlPullParser.START_TAG:
-					if ("title".equals(parser.getName().toLowerCase())) {
+				    String tagName = parser.getName().toLowerCase();
+					if ("title".equals(tagName)) {
 						// Handle HTML
 						setResult(parser.nextText());
 						return false;
-					} else if ("card".equals(parser.getName().toLowerCase())) {
+					} else if ("card".equals(tagName)) {
 						// Handle WML - XXX - check that this is proper semantics
 						setResult(parser.getAttributeValue(null, "title"));
 						return false;
