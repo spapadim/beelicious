@@ -2,7 +2,6 @@ package net.bitquill.delicious;
 
 import android.app.Activity;
 import android.app.ListActivity;
-import android.app.SearchManager;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -63,7 +62,7 @@ public class TagListActivity extends ListActivity {
         Intent intent = new Intent(this, BookmarkListActivity.class);
         if (c != null) {
             intent.setAction(Intent.ACTION_VIEW);
-            intent.putExtra(BookmarkService.EXTRA_TAG, mCursorAdapter.convertToString(c));
+            intent.putExtra(DeliciousApp.EXTRA_TAG, mCursorAdapter.convertToString(c));
         }
         startActivity(intent);
     }

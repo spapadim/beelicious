@@ -40,14 +40,6 @@ import android.util.Log;
 public class BookmarkService extends Service {
     private static final String TAG = BookmarkService.class.getSimpleName();
     
-    public static final String ACTION_SYNC_TAGS = "net.bitquill.delicious.intent.action.SYNC_TAGS";
-    public static final String ACTION_SUBMIT_BOOKMARK = "net.bitquill.delicious.intent.action.SUBMIT_BOOKMARK";
-    
-    public static final String EXTRA_FORCE_SYNC = "net.bitquill.delicious.intent.extra.FORCE_SYNC";
-    public static final String EXTRA_BOOKMARK = "net.bitquill.delicious.intent.extra.BOOKMARK";
-    public static final String EXTRA_SHARED = "net.bitquill.delicious.intent.extra.SHARED";
-    public static final String EXTRA_TAG = "net.bitquill.delicious.intent.extra.TAG";
-    
     private NotificationManager mNotificationManager;
     private ConnectivityManager mConnectivityManager;
     private TelephonyManager mTelephonyManager;
@@ -61,12 +53,13 @@ public class BookmarkService extends Service {
     public static void syncCancel (Context context) {
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
         Intent intent = new Intent(context, BookmarkService.class);
-        intent.setAction(ACTION_SYNC_TAGS);
+        intent.setAction(DeliciousApp.ACTION_SYNC_TAGS);
         alarmManager.cancel(PendingIntent.getService(context, 0, intent, 0));
     }
     
     /**
-     * Register an alarm for periodic tag syncing in the background.
+     * Register an alarm for periodic tag syncing in the background.  Will clear any
+     * existing alarms and register a new inexact alarm with the given interval.
      * @param context
      * @param interval
      */
@@ -74,10 +67,11 @@ public class BookmarkService extends Service {
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
         long firstWake = System.currentTimeMillis() + interval;
         Intent intent = new Intent(context, BookmarkService.class);
-        intent.setAction(ACTION_SYNC_TAGS);
+        intent.setAction(DeliciousApp.ACTION_SYNC_TAGS);
+        PendingIntent pending = PendingIntent.getService(context, 0, intent, 0);
+        alarmManager.cancel(pending); // Make sure existing alarms are cleared
         alarmManager.setInexactRepeating(AlarmManager.RTC, 
-                firstWake, interval, 
-                PendingIntent.getService(context, 0, intent, 0));
+                firstWake, interval, pending);
     }
     
     /**
@@ -102,9 +96,9 @@ public class BookmarkService extends Service {
      */
     public static void actionSyncTags (Context context, boolean force) {
         Intent intent = new Intent(context, BookmarkService.class);
-        intent.setAction(BookmarkService.ACTION_SYNC_TAGS);
+        intent.setAction(DeliciousApp.ACTION_SYNC_TAGS);
         if (force) {
-            intent.putExtra(EXTRA_FORCE_SYNC, true);
+            intent.putExtra(DeliciousApp.EXTRA_FORCE_SYNC, true);
         }
         context.startService(intent);
     }
@@ -117,9 +111,9 @@ public class BookmarkService extends Service {
      */
     public static void actionSubmitBookmark (Context context, Bookmark bookmark, boolean shared) {
         Intent intent = new Intent(context, BookmarkService.class);
-        intent.setAction(BookmarkService.ACTION_SUBMIT_BOOKMARK);
-        intent.putExtra(BookmarkService.EXTRA_BOOKMARK, bookmark);
-        intent.putExtra(BookmarkService.EXTRA_SHARED, shared);
+        intent.setAction(DeliciousApp.ACTION_SUBMIT_BOOKMARK);
+        intent.putExtra(DeliciousApp.EXTRA_BOOKMARK, bookmark);
+        intent.putExtra(DeliciousApp.EXTRA_SHARED, shared);
         context.startService(intent);
     }
 		
@@ -142,13 +136,13 @@ public class BookmarkService extends Service {
 	public void onStart(Intent intent, int startId) {
 		super.onStart(intent, startId);
 		String action = intent.getAction();
-		if (ACTION_SYNC_TAGS.equals(action)) {
-		    boolean forceSync = intent.hasExtra(EXTRA_FORCE_SYNC) && 
-		        intent.getBooleanExtra(EXTRA_FORCE_SYNC, false);
+		if (DeliciousApp.ACTION_SYNC_TAGS.equals(action)) {
+		    boolean forceSync = intent.hasExtra(DeliciousApp.EXTRA_FORCE_SYNC) && 
+		        intent.getBooleanExtra(DeliciousApp.EXTRA_FORCE_SYNC, false);
 		    syncTags(!forceSync);
-		} else if (ACTION_SUBMIT_BOOKMARK.equals(action)) {
-		    Bookmark bookmark = intent.getParcelableExtra(EXTRA_BOOKMARK);
-		    boolean shared = intent.getBooleanExtra(EXTRA_SHARED, true);
+		} else if (DeliciousApp.ACTION_SUBMIT_BOOKMARK.equals(action)) {
+		    Bookmark bookmark = intent.getParcelableExtra(DeliciousApp.EXTRA_BOOKMARK);
+		    boolean shared = intent.getBooleanExtra(DeliciousApp.EXTRA_SHARED, true);
 		    submitBookmark(bookmark, shared);
 		}
 	}
@@ -266,8 +260,8 @@ public class BookmarkService extends Service {
 	private PendingIntent makeBookmarkPendingIntent (Bookmark bookmark, boolean shared, int flags) {
 	    Intent intent = new Intent(this, BookmarkActivity.class);
 	    intent.setAction(Intent.ACTION_INSERT);
-	    intent.putExtra(EXTRA_BOOKMARK, bookmark);
-	    intent.putExtra(EXTRA_SHARED, shared);
+	    intent.putExtra(DeliciousApp.EXTRA_BOOKMARK, bookmark);
+	    intent.putExtra(DeliciousApp.EXTRA_SHARED, shared);
 	    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 	    return PendingIntent.getActivity(this, 0, intent, flags);
 	}
