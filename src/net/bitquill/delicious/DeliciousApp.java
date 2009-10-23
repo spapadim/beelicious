@@ -31,7 +31,15 @@ public final class DeliciousApp extends Application {
 	public static final String LOG_TAG = "bitlicious";
 	
 	public static final String PREFS_NAME = "BitliciousPreferences";
-	
+
+    public static final String ACTION_SYNC_TAGS = "net.bitquill.delicious.intent.action.SYNC_TAGS";
+    public static final String ACTION_SUBMIT_BOOKMARK = "net.bitquill.delicious.intent.action.SUBMIT_BOOKMARK";
+
+    public static final String EXTRA_FORCE_SYNC = "net.bitquill.delicious.intent.extra.FORCE_SYNC";
+    public static final String EXTRA_BOOKMARK = "net.bitquill.delicious.intent.extra.BOOKMARK";
+    public static final String EXTRA_SHARED = "net.bitquill.delicious.intent.extra.SHARED";
+    public static final String EXTRA_TAG = "net.bitquill.delicious.intent.extra.TAG";
+
 	private static DeliciousApp sMe;
 	
 	public DeliciousClient mDeliciousClient;
@@ -61,6 +69,9 @@ public final class DeliciousApp extends Application {
 		mDeliciousClient.setApiEndpoint(endpoint);
 		// Set credentials on client; if null, client will ignore
 		mDeliciousClient.setCredentials(username, password);
+		
+		// Make sure alarm for background tag fetch is appropriately set
+		BookmarkService.syncUpdate(this);
 	}
 
 }

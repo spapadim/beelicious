@@ -190,7 +190,7 @@ public class BookmarkListActivity extends ListActivity implements ListView.OnScr
 			mFetchPending = false;
 			mQueryTag = null;
 			if (Intent.ACTION_VIEW.equals(intent.getAction())) {
-			    mQueryTag = intent.getStringExtra(BookmarkService.EXTRA_TAG);
+			    mQueryTag = intent.getStringExtra(DeliciousApp.EXTRA_TAG);
 			} else if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
 				mQueryTag = intent.getStringExtra(SearchManager.QUERY); 
 			}

@@ -70,7 +70,7 @@ public class BookmarkActivity extends Activity {
 	public static void actionEditBookmark (Context context, Bookmark bookmark) {
 	    Intent i = new Intent(context, BookmarkActivity.class);
 	    i.setAction(Intent.ACTION_INSERT);
-	    i.putExtra(BookmarkService.EXTRA_BOOKMARK, bookmark);
+	    i.putExtra(DeliciousApp.EXTRA_BOOKMARK, bookmark);
 	    context.startActivity(i);
 	}
 
@@ -227,9 +227,9 @@ public class BookmarkActivity extends Activity {
         	url = intent.getStringExtra("url");
             title = intent.getStringExtra("title");
         } else if (Intent.ACTION_INSERT.equals(action) &&
-                intent.hasExtra(BookmarkService.EXTRA_BOOKMARK)) {
-            Bookmark bm = intent.getParcelableExtra(BookmarkService.EXTRA_BOOKMARK);
-            boolean shared = intent.getBooleanExtra(BookmarkService.EXTRA_SHARED, true);
+                intent.hasExtra(DeliciousApp.EXTRA_BOOKMARK)) {
+            Bookmark bm = intent.getParcelableExtra(DeliciousApp.EXTRA_BOOKMARK);
+            boolean shared = intent.getBooleanExtra(DeliciousApp.EXTRA_SHARED, true);
             url = bm.getUrl();
             title = bm.getDescription();
             mCommentsEdit.setText(bm.getExtended());
