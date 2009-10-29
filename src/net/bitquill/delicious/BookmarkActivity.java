@@ -40,6 +40,8 @@ import android.text.TextWatcher;
 import android.text.style.URLSpan;
 import android.text.util.Linkify;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -57,6 +59,8 @@ public class BookmarkActivity extends Activity {
     
 	private static final int REQ_LOGIN = 100;
 	
+	private static final int MENU_ITEM_SETTINGS = Menu.FIRST;
+
 	private DeliciousClient mDeliciousClient;
 	
 	private EditText mUrlEdit;
@@ -261,6 +265,27 @@ public class BookmarkActivity extends Activity {
         	}
         }
     }
+	
+	   @Override
+	    public boolean onCreateOptionsMenu(Menu menu) {
+	        super.onCreateOptionsMenu(menu);
+	        menu.add(0, MENU_ITEM_SETTINGS, 0, R.string.menu_settings)
+	            .setShortcut('1', 's')
+	            .setIcon(android.R.drawable.ic_menu_preferences);
+	        return true;
+	    }
+	    
+	    @Override
+	    public boolean onOptionsItemSelected(MenuItem item) {
+	        switch (item.getItemId()) {
+	        case MENU_ITEM_SETTINGS:
+	            startActivity(new Intent(this, SettingsActivity.class));
+	            return true;
+	        default:
+	            return super.onOptionsItemSelected(item);
+	        }
+	    }
+
 	
 	private String extractUrl (String text) {
 	    SpannableString s = new SpannableString(text);
