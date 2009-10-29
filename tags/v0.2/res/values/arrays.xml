@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+<string-array name="pref_tag_bg_sync_entries">
+    <item>1 hour</item>
+    <item>12 hours</item>
+    <item>24 hours</item>
+    <item>Manually</item>
+</string-array>
+<!-- Do not localize tag_bg_sync_values and _default_value !! -->
+<string-array name="pref_tag_bg_sync_values">
+    <item>1</item>
+    <item>12</item>
+    <item>24</item>
+    <item>-1</item>
+</string-array>
+<string name="pref_tag_bg_sync_default_value">24</string>
+
+<string-array name="pref_endpoint_entries">
+    <item>Del.icio.us</item>
+    <item>Gnolia</item>
+    <item>User-defined</item>  <!-- Has to be last -->
+</string-array>
+<string-array name="pref_endpoint_values">
+    <item>https://api.del.icio.us/v1/</item>
+    <item>https://gnolia.com/api/mirrord/v1/</item>
+    <item></item> <!-- Empty, has to be last, corresponds to "user-defined" -->
+</string-array>
+</resources>

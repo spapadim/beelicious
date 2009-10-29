@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+	package="net.bitquill.delicious" android:versionName="0.2" android:versionCode="5">
+
+	<uses-sdk android:minSdkVersion="1" />
+
+	<application android:icon="@drawable/icon" android:label="@string/app_name"
+		android:name=".DeliciousApp" android:description="@string/app_description"
+		android:debuggable="false">
+
+		<activity android:label="@string/add_bookmark_title"
+			android:icon="@drawable/icon" android:launchMode="singleTop"
+			android:name=".BookmarkActivity" android:configChanges="keyboardHidden|orientation">
+
+			<intent-filter>
+				<action android:name="android.intent.action.SEND" />
+				<category android:name="android.intent.category.DEFAULT">/</category>
+				<data android:mimeType="text/plain" />
+			</intent-filter>
+			<intent-filter>
+				<action android:name="android.intent.action.INSERT" />
+				<category android:name="android.intent.category.DEFAULT" />
+				<data android:mimeType="vnd.android.cursor.dir/bookmark" />
+			</intent-filter>
+		</activity>
+
+		<activity android:label="" android:configChanges="orientation|keyboardHidden"
+			android:launchMode="singleTop" android:name=".SettingsActivity">
+		</activity>
+
+		<activity android:name=".BookmarkListActivity"
+		    android:label="@string/bookmark_list_title">
+
+			<intent-filter>
+				<action android:name="android.intent.action.SEARCH" />
+				<category android:name="android.intent.category.DEFAULT" />
+			</intent-filter>
+		</activity>
+
+		<activity android:label="@string/login_title"
+			android:launchMode="singleTop" android:name=".LoginActivity"
+			android:configChanges="keyboardHidden|orientation" />
+
+		<activity android:name=".CloudActivity" android:launchMode="singleTop"
+			android:label="@string/tag_cloud_title" android:configChanges="keyboardHidden|orientation" />
+
+        <activity android:name=".TagListActivity" 
+            android:label="@string/tag_list_title" 
+            android:launchMode="singleTop"
+            android:configChanges="keyboardHidden|orientation">
+
+            <intent-filter android:icon="@drawable/icon"
+                android:label="@string/app_name">
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <meta-data android:resource="@xml/searchable" android:name="android.app.searchable" />
+        </activity>
+
+        <receiver android:name=".BootReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+
+		<service android:name=".BookmarkService" android:exported="false" />
+
+	</application>
+	
+	<uses-permission android:name="android.permission.INTERNET" />
+	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
+</manifest> 
