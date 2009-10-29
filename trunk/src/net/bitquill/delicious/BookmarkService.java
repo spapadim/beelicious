@@ -252,7 +252,7 @@ public class BookmarkService extends Service {
                     notification.setLatestEventInfo(BookmarkService.this, 
                             getText(R.string.notify_error_title), getText(R.string.notify_error_text), 
                             makeBookmarkPendingIntent(bookmark, shared, PendingIntent.FLAG_ONE_SHOT));
-                    notification.flags |= Notification.FLAG_AUTO_CANCEL;
+                    notification.flags |= Notification.FLAG_AUTO_CANCEL | Notification.FLAG_NO_CLEAR;
                     mNotificationManager.notify(R.drawable.stat_notify_error, notification); // FIXME notification id
                 }
             }
