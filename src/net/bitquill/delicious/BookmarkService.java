@@ -65,7 +65,18 @@ public class BookmarkService extends Service {
      */
     public static void syncSchedule (Context context, long interval) {
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
-        long firstWake = System.currentTimeMillis() + interval;
+        
+        // If we set firstWake equal to current time plus interval (instead of plus a second),
+        // the alarm may never trigger if syncSchedule (which is called on app startup)
+        // is invoked more often than the interval.
+        // For inexact repeating alarms, firstWake is the time *before* which the alarm
+        // is guaranteed to not be triggered, but the alarm may actuall be triggered 
+        // with a delay of up to a whole interval after the requested firstWake.
+        // Therefore, setting firstWake to a second in the future does not mean the alarm
+        // will be triggered at that time; it just means that we want it to trigger in the
+        // next inexact time bucket; this is sort of a hack, but it seems to work...
+        long firstWake = System.currentTimeMillis() + DateUtils.SECOND_IN_MILLIS;
+        
         Intent intent = new Intent(context, BookmarkService.class);
         intent.setAction(DeliciousApp.ACTION_SYNC_TAGS);
         PendingIntent pending = PendingIntent.getService(context, 0, intent, 0);
